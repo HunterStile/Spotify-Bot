@@ -23,26 +23,11 @@ import os
 
 # Ottieni il percorso assoluto della directory corrente (dove si trova il file eseguibile)
 current_dir = os.path.dirname(os.path.abspath(__file__))
-print(f"Current directory: {current_dir}")
-
 # Costruisci il percorso assoluto della cartella "Setup"
 setup_dir = os.path.join(current_dir, 'Setup')
-print(f"Setup directory: {setup_dir}")
-
 # Costruisci i percorsi assoluti dei file di testo
 path_chrome = os.path.join(setup_dir, 'path_chrome.txt')
 path_driver = os.path.join(setup_dir, 'path_driver.txt')
-
-print(f"Path to path_chrome.txt: {path_chrome}")
-print(f"Path to path_driver.txt: {path_driver}")
-
-# Verifica se i file esistono
-if not os.path.isfile(path_chrome):
-    print(f"Errore: Il file '{path_chrome}' non è stato trovato.")
-if not os.path.isfile(path_driver):
-    print(f"Errore: Il file '{path_driver}' non è stato trovato.")
-
-
 
 #Variabili
 file = 'account_spotify.csv'
@@ -144,8 +129,6 @@ def Crea_e_Segui():
     robot = False
     creato = False
     
-    
-
     #variabili 
     fake = Faker('it_IT')
     nomi = []
@@ -165,11 +148,6 @@ def Crea_e_Segui():
     tempmail_scelto= random.choice(tempmail_all)
 
 
-
-    proxy_host='93.93.18.248'
-    proxy_port='12323'
-    proxy_username='14a5d077f62b4'
-    proxy_password='9cee1b88e6'
 
     #CONFIGURAZIONE BROWSER
     if conproxy == False:
@@ -378,8 +356,7 @@ def Sento_canzone(driver,posizione):
     #Stampa l'ultimo numero della stringa
     print(f"posizione : [{numeri[-1]}]")
     posizione_scelta(driver,posizione)
-            
-        
+             
 def scegli_playlist(driver,playlist_scelta):
     print("Vado sulla playlist..")
     driver.get(playlist_scelta)
