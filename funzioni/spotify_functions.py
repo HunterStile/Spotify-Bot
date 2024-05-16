@@ -124,7 +124,6 @@ def posizione_scelta(driver,posizione):
 
 def Crea_e_Segui():
     #variabili - logiche
-    conproxy= False
     robot2 = False
     robot = False
     creato = False
@@ -147,19 +146,9 @@ def Crea_e_Segui():
     tempmail_all=['https://yopmail.com/it/']
     tempmail_scelto= random.choice(tempmail_all)
 
-
-
     #CONFIGURAZIONE BROWSER
-    if conproxy == False:
-        driver = configurazione_browser()
-    else:
-        print("inserisco proxy")
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument(f"--proxy-server=http://{proxy_host}:{proxy_port}")
-        
-        chrome_service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
-        sleep(randint(4,5))
+    driver = configurazione_browser()
+    
     #scelta del temp mail
     if tempmail_scelto == 'https://yopmail.com/it/':
         email = generate_random_string(10)
