@@ -1,4 +1,4 @@
-from spotify_functions import *
+from funzioni.spotify_functions import *
 
 ## >main<
 

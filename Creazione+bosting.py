@@ -1,8 +1,7 @@
-from spotify_functions import *
+from funzioni.spotify_functions import *
 
 ## >main<
 print("Benvenuto nel bot Spotify by HunterStile!") 
-
 
 
 #scegli chi bustare!

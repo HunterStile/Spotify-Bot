@@ -1,4 +1,4 @@
-from spotify_functions import *
+from Funzioni.spotify_functions import *
 
 ## >main<
 ripetizione = True
