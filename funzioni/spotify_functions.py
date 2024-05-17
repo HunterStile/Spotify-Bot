@@ -37,7 +37,7 @@ b = 2
 count = 0
 vuoto = 'NAN'
 riproduzioni = 0
-solo_creazione = False
+
 
 #posizioni brani
             
@@ -63,7 +63,7 @@ posizione19 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/di
 posizione20 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[20]/div'
 
 #playlist
-playlist1='https://open.spotify.com/playlist/6rsfKKwWanysCUAzhRQnBO'  #pop-punk 
+playlist1='https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC'  #pop-punk 
 playlist2='https://open.spotify.com/playlist/1qEvrxdkHTJdrtxHlG80Ry'  #trap-italia
 playlist3='https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R'  #new-generation
 playlist4='https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV'  #new-music
@@ -122,7 +122,7 @@ def posizione_scelta(driver,posizione):
         print(f"Errore durante il clic: {str(e)}")
         sleep(randint(120, 160))
 
-def Crea_e_Segui():
+def crea_account(driver):
     #variabili - logiche
     robot2 = False
     robot = False
@@ -145,9 +145,6 @@ def Crea_e_Segui():
     link='https://www.spotify.com/it/signup'
     tempmail_all=['https://yopmail.com/it/']
     tempmail_scelto= random.choice(tempmail_all)
-
-    #CONFIGURAZIONE BROWSER
-    driver = configurazione_browser()
     
     #scelta del temp mail
     if tempmail_scelto == 'https://yopmail.com/it/':
@@ -177,14 +174,14 @@ def Crea_e_Segui():
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="day"]').send_keys(giorno)
     sleep(randint(a,b))
-            
+                
     if sesso == 'M':                  
         driver.find_element(By.XPATH,'//*[@id="__next"]/main/main/section/div/form/div[1]/div[2]/div/section/div[3]/fieldset/div/div/div[1]/label/span[1]').click()
         sleep(randint(a,b))
     else:                             
         driver.find_element(By.XPATH,'//*[@id="__next"]/main/main/section/div/form/div[1]/div[2]/div/section/div[3]/fieldset/div/div/div[2]/label/span[1]').click()
         sleep(randint(a,b))
-    
+        
     driver.find_element(By.XPATH,'//*[@id="__next"]/main/main/section/div/form/div[2]/button/span[1]').click()
     sleep(randint(a,b))           
     driver.find_element(By.XPATH,'//*[@id="__next"]/main/main/section/div/form/div[1]/div[2]/div/section/div[4]/div[1]/div/div/label/span[1]').click()
@@ -218,22 +215,8 @@ def Crea_e_Segui():
     sleep(randint(a,b))
     page_text = check_conferma(driver)
     creato = "Scarica" in page_text
-    if solo_creazione == True:
-        input("Fai Quello Che devi...")
     if creato == True:
         print("Account Creato!")
-        print("Seguo le playlist...")
-    	#SEGUIRE LE PLAYLIST        
-        seguo_playlist(driver,playlist1)
-        seguo_playlist(driver,playlist2)
-        seguo_playlist(driver,playlist3)
-        seguo_playlist(driver,playlist4)
-        seguo_playlist(driver,playlist5)
-        seguo_playlist(driver,playlist6)
-        
-    
-        
-
         # Dati da inserire nel file CSV
         new_rows = [
             [email, password]
@@ -254,7 +237,7 @@ def Crea_e_Segui():
 def seguo_playlist(driver,link):
     driver.get(link)
     sleep(randint(4,5))                     
-    driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[2]/div[4]/div/div/div/div/button[1]').click()
+    driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[2]/div[2]/div/div/button[1]').click()
     sleep(randint(4,5))
 
 def Accesso_spotify(driver,email,password):
