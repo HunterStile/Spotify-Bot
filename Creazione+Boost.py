@@ -36,12 +36,9 @@ while ripetizione == True:
 
     #Bosting canzoni
     scegli_playlist(driver,playlist1) #poppunk
-    Sento_canzone(driver,posizione5)  
-    Sento_canzone(driver,posizione7)
-    Sento_canzone(driver,posizione11)
-    Sento_canzone(driver,posizione16)
-    Sento_canzone(driver,posizione20)
-    
+    Sento_canzone(driver,posizione11)  
+    sleep(120)
+
     #scelta ripetizione
     ripetizione = True
     driver.close()
