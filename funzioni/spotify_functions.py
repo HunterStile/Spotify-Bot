@@ -40,27 +40,27 @@ riproduzioni = 0
 
 
 #posizioni brani
-            
-posizione1  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[1]/div'
-posizione2  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[2]/div'
-posizione3  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[3]/div'
-posizione4  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[4]/div'
-posizione5  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[5]/div'
-posizione6  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[6]/div'
-posizione7  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[7]/div'
-posizione8  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[8]/div'
-posizione9  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[9]/div'
-posizione10 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[10]/div'
-posizione11 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[11]/div'
-posizione12 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[12]/div'
-posizione13 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[13]/div'
-posizione14 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[14]/div'
-posizione15 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[15]/div'
-posizione16 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[16]/div'
-posizione17 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[17]/div'
-posizione18 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[18]/div'
-posizione19 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[19]/div'
-posizione20 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div/div/div[2]/main/div[1]/section/div[2]/div[3]/div/div[2]/div[2]/div[20]/div'
+posizione1  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[1]/div'
+posizione2  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/div'
+posizione3  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[3]/div'
+posizione4  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[4]/div'
+posizione5  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[5]/div'
+posizione6  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[6]/div'
+posizione7  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[7]/div'
+posizione8  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[8]/div'
+posizione9  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[9]/div'
+posizione10 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[10]/div'
+posizione11 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[11]/div'
+posizione12 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[12]/div'
+posizione13 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[13]/div'
+posizione14 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[14]/div'
+posizione15 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[15]/div'
+posizione16 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[16]/div'
+posizione17 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[17]/div'
+posizione18 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[18]/div'
+posizione19 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[19]/div'
+posizione20 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[20]/div'
+posizione21 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[21]/div'
 
 #playlist
 playlist1='https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC'  #pop-punk 
@@ -75,6 +75,8 @@ def configurazione_browser():
     chrome_driver_path = leggi_txt(path_driver)
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = leggi_txt(path_chrome)
+    # Imposta la posizione della finestra per il secondo schermo
+    chrome_options.add_argument("window-position=1920,0")
     driver =Chrome(service=Service(chrome_driver_path),options=chrome_options)
     sleep(randint(a,b))
     return driver
@@ -245,8 +247,8 @@ def Accesso_spotify(driver,email,password):
     driver.get(link_accesso)
     sleep(randint(2,3))
     driver.find_element(By.XPATH,'//*[@id="onetrust-accept-btn-handler"]').click()
-    sleep(randint(a,b))
-    driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[3]/header/div[4]/div[1]/button[2]').click()
+    sleep(randint(a,b))           
+    driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[3]/header/div[2]/div[3]/div[1]/button[2]').click()
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="login-username"]').send_keys(email)
     sleep(randint(a,b))
