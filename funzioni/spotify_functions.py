@@ -237,11 +237,16 @@ def crea_account(driver):
     return email,password,driver
 
 def seguo_playlist(driver,link):
-    driver.get(link)
-    sleep(randint(4,5))                     
-    driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[2]/div[2]/div/div/button[1]').click()
-    sleep(randint(4,5))
-
+    try:
+        driver.get(link)
+        sleep(randint(4,5))                     
+        driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[2]/div[2]/div/div/button[1]').click()
+        sleep(randint(4,5))
+        print("Playlist seguita!")
+    except Exception as e:
+        print(f"Errore durante il clic: {str(e)}")
+        sleep(randint(4,5)) 
+        
 def Accesso_spotify(driver,email,password):
     link_accesso = 'https://open.spotify.com/'
     driver.get(link_accesso)
