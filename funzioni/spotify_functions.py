@@ -1,4 +1,5 @@
 #librerie
+from config import *
 from selenium.webdriver import Chrome
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
@@ -38,39 +39,12 @@ count = 0
 vuoto = 'NAN'
 riproduzioni = 0
 
-
-#posizioni brani
-posizione1  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[1]/div'
-posizione2  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/div'
-posizione3  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[3]/div'
-posizione4  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[4]/div'
-posizione5  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[5]/div'
-posizione6  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[6]/div'
-posizione7  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[7]/div'
-posizione8  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[8]/div'
-posizione9  = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[9]/div'
-posizione10 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[10]/div'
-posizione11 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[11]/div'
-posizione12 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[12]/div'
-posizione13 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[13]/div'
-posizione14 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[14]/div'
-posizione15 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[15]/div'
-posizione16 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[16]/div'
-posizione17 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[17]/div'
-posizione18 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[18]/div'
-posizione19 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[19]/div'
-posizione20 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[20]/div'
-posizione21 = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[21]/div'
-
-#playlist
-playlist1='https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC'  #pop-punk 
-playlist2='https://open.spotify.com/playlist/1qEvrxdkHTJdrtxHlG80Ry'  #trap-italia
-playlist3='https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R'  #new-generation
-playlist4='https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV'  #new-music
-playlist5='https://open.spotify.com/playlist/2EAacye5AQOZu9WN8Z5k4X'  #top-music
-playlist6='https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS'  #Indieitalia
+menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div/div[5]/button[2]'
+aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
+posizione_brano = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div'
 
 
+#Funzioni
 def configurazione_browser():
     chrome_driver_path = leggi_txt(path_driver)
     chrome_options = webdriver.ChromeOptions()
@@ -80,6 +54,9 @@ def configurazione_browser():
     driver =Chrome(service=Service(chrome_driver_path),options=chrome_options)
     sleep(randint(a,b))
     return driver
+
+def generate_xpath(base_xpath, n):
+    return base_xpath.format(n)
 
 def generate_random_string(length):
     # definisce i caratteri alfanumerici possibili
@@ -330,24 +307,39 @@ def Sento_canzoni(driver,conteggio,all_posizione,prima_posizione,seconda_posizio
 
 def Sento_canzone(driver,posizione):
     print("Ascolto la canzone..")
-    # Trova tutti i numeri nella stringa utilizzando un'espressione regolare
-    numeri = re.findall(r'\d+', posizione)
-    #Stampa l'ultimo numero della stringa
-    print(f"posizione : [{numeri[-1]}]")
-    posizione_scelta(driver,posizione)
+    xpath = generate_xpath(posizione_brano,posizione)
+    print(f"posizione :",posizione)
+    posizione_scelta(driver,xpath)
              
 def scegli_playlist(driver,playlist_scelta):
     print("Vado sulla playlist..")
     driver.get(playlist_scelta)
     sleep(randint(3,4))
-    
 
+def elimina_brano(driver, posizione):
+    print("Elimino la canzone..")     
+    sleep(randint(2,3))
+    xpath = generate_xpath(menu_canzone,posizione)
+    driver.find_element(By.XPATH,xpath).click()
+    sleep(randint(2,3))
+    driver.find_element(By.XPATH,'//*[@id="context-menu"]/ul/li[2]/button').click()
+    sleep(randint(a,b))
+    print("Canzone eliminata!")
 
-
-
-
-
-
+def aggiungi_brano(driver, posizione, playlist_target,posizione_playlist):
+    print("Vado sulla playlist..")
+    driver.get(playlist_target)
+    sleep(randint(3,4))   
+    print("Aggiungo la canzone..")     
+    sleep(randint(2,3))
+    xpath = generate_xpath(menu_canzone,posizione)
+    driver.find_element(By.XPATH,xpath).click()
+    sleep(randint(2,3))
+    driver.find_element(By.XPATH,'//*[@id="context-menu"]/ul/li[1]/button').click()
+    sleep(randint(a,b))
+    xpath = generate_xpath(aggiungi_playlist,posizione_playlist)
+    driver.find_element(By.XPATH,xpath).click() 
+    print("Canzone aggiunta!")
 
 
 
