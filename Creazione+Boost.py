@@ -1,5 +1,5 @@
 from funzioni.spotify_functions import *
-
+from config import *
 ## >main<
 print("Benvenuto nel bot Spotify by HunterStile!") 
 
@@ -12,7 +12,8 @@ print("Benvenuto nel bot Spotify by HunterStile!")
 #inde-italia - PLAYLIST6
 #start
 
-#start
+#Variabili
+posizione = '11'
 
 ripetizione = True
 while ripetizione == True:
@@ -36,7 +37,7 @@ while ripetizione == True:
 
     #Bosting canzoni
     scegli_playlist(driver,playlist1) #poppunk
-    Sento_canzone(driver,posizione11)  
+    Sento_canzone(driver,posizione)  
     sleep(120)
 
     #scelta ripetizione
