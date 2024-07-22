@@ -22,3 +22,24 @@ Il Spotify-Bot è un programma che automatizza alcune operazioni su Spotify, con
 ## Contributi
 Sono benvenuti i contributi a questo progetto! Se desideri contribuire, segui le linee guida di [contributing.md](CONTRIBUTING.md).
 
+## Legal
+
+### Uso Responsabile
+
+Il Spotify-Bot è destinato esclusivamente a scopi informativi ed educativi. L'uso di questo bot deve rispettare i termini e le condizioni di Spotify, e non deve violare alcuna legge o regolamento applicabile. 
+
+### Limitazioni e Responsabilità
+
+1. **Responsabilità dell'Utente**: L'utente è l'unico responsabile dell'uso del bot e deve garantire che qualsiasi attività intrapresa con il bot sia conforme alle politiche di Spotify e alle normative vigenti. 
+
+2. **Uso Non Autorizzato**: L'uso di questo bot per scopi commerciali, per abusare dei servizi di Spotify, o per qualsiasi attività non autorizzata può comportare il divieto dell'account Spotify e conseguenze legali. 
+
+3. **Garanzia di Funzionalità**: Questo bot viene fornito "così com'è" senza garanzie di alcun tipo, espresse o implicite. Non ci sono garanzie che il bot funzioni senza errori o che soddisfi tutte le aspettative degli utenti.
+
+4. **Modifiche ai Termini**: Spotify può aggiornare le proprie politiche e termini di servizio, e l'uso del bot deve sempre essere conforme ai termini più recenti di Spotify. 
+
+5. **Rimozione del Bot**: Gli sviluppatori del bot si riservano il diritto di interrompere o modificare il bot in qualsiasi momento senza preavviso.
+
+Utilizzando questo bot, accetti di esonerare gli sviluppatori del bot da qualsiasi responsabilità derivante dall'uso del bot stesso.
+
+Se hai dubbi riguardo all'uso legale del bot o se hai domande sui tuoi diritti e doveri, ti consigliamo di consultare un legale.
