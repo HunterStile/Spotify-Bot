@@ -13,6 +13,8 @@ print("Benvenuto nel bot Spotify by HunterStile!")
 
 #variabili
 posizione=11
+config_file_name = 'profilo 9.ppx'
+changhe_proxy(config_file_name)
 
 file = 'account_spotify.csv'
 with open(file, newline='') as csvfile:

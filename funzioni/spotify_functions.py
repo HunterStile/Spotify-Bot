@@ -21,6 +21,8 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 import re
 import os
+import subprocess
+import pyautogui
 
 # Ottieni il percorso assoluto della directory corrente (dove si trova il file eseguibile)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -45,6 +47,19 @@ posizione_brano = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]
 
 
 #Funzioni
+
+def changhe_proxy(config_file_name):
+    proxifier_exe_path = "C:\\Program Files (x86)\\Proxifier\\proxifier.exe"
+    config_file_path = "C:\\Users\\Luigi\\AppData\\Roaming\\Proxifier4\\Profiles\\" + config_file_name
+    command = f'"{proxifier_exe_path}" -load "{config_file_path}"'
+    subprocess.Popen(command)
+    sleep(2)
+    pyautogui.press('enter')
+    sleep(2)
+    pyautogui.press('enter')
+    sleep(10)
+
+
 def configurazione_browser():
     chrome_driver_path = leggi_txt(path_driver)
     chrome_options = webdriver.ChromeOptions()
