@@ -41,8 +41,7 @@ while ripetizione == True:
 
     #Bosting canzoni
     scegli_playlist(driver,playlist1) #poppunk
-    Sento_canzone(driver,posizione)  
-    sleep(120)
+    Sento_canzone(driver,posizione) 
 
     #scelta ripetizione
     ripetizione = True

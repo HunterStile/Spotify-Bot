@@ -1,5 +1,4 @@
 #librerie
-from config import *
 from selenium.webdriver import Chrome
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
@@ -33,6 +32,7 @@ path_chrome = os.path.join(setup_dir, 'path_chrome.txt')
 path_driver = os.path.join(setup_dir, 'path_driver.txt')
 
 #Variabili
+file = 'account_spotify.csv'
 file_premium = 'account_spotify_premium.csv'
 a = 1
 b = 2
@@ -42,7 +42,7 @@ riproduzioni = 0
 
 menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div/div[5]/button[2]'
 aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
-posizione_brano = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div'
+posizione_brano = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div/div[1]'
                     
 
 
@@ -259,7 +259,7 @@ def Accesso_spotify(driver,email,password):
     sleep(randint(2,3))
     driver.find_element(By.XPATH,'//*[@id="onetrust-accept-btn-handler"]').click()
     sleep(randint(a,b))           
-    driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[3]/header/div[2]/div[3]/div[1]/button[2]').click()
+    driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[1]/div[3]/div[1]/button[2]').click()
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="login-username"]').send_keys(email)
     sleep(randint(a,b))

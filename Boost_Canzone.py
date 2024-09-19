@@ -15,8 +15,8 @@ print("Benvenuto nel bot Spotify by HunterStile!")
 posizione=11
 
 #Scelta PROXY
-config_file_name = random.choice(proxy_list)
-changhe_proxy(config_file_name)  # Configura il proxy
+#config_file_name = random.choice(proxy_list)
+#changhe_proxy(config_file_name)  # Configura il proxy
 
 with open(file, newline='') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
@@ -31,7 +31,6 @@ with open(file, newline='') as csvfile:
         if errore == False:
             scegli_playlist(driver,playlist1) #poppunk
             Sento_canzone(driver,posizione)
-            sleep(120)
             
         else:
             print("Accesso non riusciuto, riprovo con il prossimo account...")
