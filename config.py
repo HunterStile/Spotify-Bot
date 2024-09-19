@@ -8,3 +8,16 @@ playlist6='https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS'  #Indieital
 
 #Per l'applicativo boosting_canzone
 file = 'account_spotify.csv'
+
+# Lista dei profili proxy disponibili
+proxy_list = [
+    'profilo 1.ppx',
+    'profilo 2.ppx',
+    'profilo 3.ppx',
+    'profilo 4.ppx',
+    'profilo 5.ppx',
+    'profilo 6.ppx',
+    'profilo 7.ppx',
+    'profilo 8.ppx',
+    'profilo 9.ppx'
+]

@@ -13,10 +13,11 @@ print("Benvenuto nel bot Spotify by HunterStile!")
 
 #variabili
 posizione=11
-config_file_name = 'profilo 9.ppx'
-changhe_proxy(config_file_name)
 
-file = 'account_spotify.csv'
+#Scelta PROXY
+config_file_name = random.choice(proxy_list)
+changhe_proxy(config_file_name)  # Configura il proxy
+
 with open(file, newline='') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
     next(csvreader)  # salta la prima riga con l'intestazione
