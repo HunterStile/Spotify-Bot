@@ -43,6 +43,7 @@ riproduzioni = 0
 menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div/div[5]/button[2]'
 aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
 posizione_brano = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div/div[1]'
+posizione_seguo_playlist = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[2]/div[2]/div/div/button[1]'
                     
 
 
@@ -246,7 +247,7 @@ def seguo_playlist(driver,link):
     try:
         driver.get(link)
         sleep(randint(4,5))                     
-        driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[2]/div[2]/div/div/button[1]').click()
+        driver.find_element(By.XPATH,posizione_seguo_playlist).click()
         sleep(randint(4,5))
         print("Playlist seguita!")
     except Exception as e:
