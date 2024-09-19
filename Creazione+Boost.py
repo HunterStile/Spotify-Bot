@@ -16,8 +16,8 @@ print("Benvenuto nel bot Spotify by HunterStile!")
 posizione = '11'
 
 #Scelta PROXY
-config_file_name = random.choice(proxy_list)
-changhe_proxy(config_file_name)  # Configura il proxy
+#config_file_name = random.choice(proxy_list)
+#changhe_proxy(config_file_name)  # Configura il proxy
 
 ripetizione = True
 while ripetizione == True:

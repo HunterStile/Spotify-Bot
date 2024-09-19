@@ -33,7 +33,6 @@ path_chrome = os.path.join(setup_dir, 'path_chrome.txt')
 path_driver = os.path.join(setup_dir, 'path_driver.txt')
 
 #Variabili
-file = 'account_spotify.csv'
 file_premium = 'account_spotify_premium.csv'
 a = 1
 b = 2
@@ -43,7 +42,8 @@ riproduzioni = 0
 
 menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div/div[5]/button[2]'
 aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
-posizione_brano = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div'
+posizione_brano = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div'
+                    
 
 
 #Funzioni
@@ -58,7 +58,6 @@ def changhe_proxy(config_file_name):
     sleep(2)
     pyautogui.press('enter')
     sleep(10)
-
 
 def configurazione_browser():
     chrome_driver_path = leggi_txt(path_driver)
@@ -137,14 +136,27 @@ def crea_account(driver):
     sceltasesso = ['M','F','F']
     sesso = random.choice(sceltasesso)
     link='https://www.spotify.com/it/signup'
-    tempmail_all=['https://yopmail.com/it/']
+    tempmail_all=['gmail','hotmail','outlook','virgilio','alice']
+    tempstring = [10,11,12]
     tempmail_scelto= random.choice(tempmail_all)
+    tempstring_scelto = random.choice(tempstring)
     
     #scelta del temp mail
-    if tempmail_scelto == 'https://yopmail.com/it/':
-        email = generate_random_string(10)
-        
-    email +="@yopmail.com"
+    if tempmail_scelto == 'gmail':
+        email = generate_random_string(tempstring_scelto)
+        email +="@gmail.com"
+    if tempmail_scelto == 'hotmail':
+        email = generate_random_string(tempstring_scelto)
+        email +="@hotmail.com"
+    if tempmail_scelto == 'outlook':
+        email = generate_random_string(tempstring_scelto)
+        email +="@outlook.com"
+    if tempmail_scelto == 'virgilio':
+        email = generate_random_string(tempstring_scelto)
+        email +="@virgilio.it"
+    if tempmail_scelto == 'alice':
+        email = generate_random_string(tempstring_scelto)
+        email +="@alicie.it"
     
     #CREAZIONE ACCOUNT
     driver.get(link)
@@ -186,8 +198,9 @@ def crea_account(driver):
     sleep(randint(6,7))
     
     
-    #FINE CREAZIONE
+    #FINE CREAZIONE ACCCOUNT
     
+    #CHECK ROBOT
     page_text = check_conferma(driver)
     robot  = "Crea" in page_text
     sleep(randint(2,3))
@@ -211,6 +224,7 @@ def crea_account(driver):
     creato = "Scarica" in page_text
     if creato == True:
         print("Account Creato!")
+
         # Dati da inserire nel file CSV
         new_rows = [
             [email, password]
@@ -232,7 +246,7 @@ def seguo_playlist(driver,link):
     try:
         driver.get(link)
         sleep(randint(4,5))                     
-        driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[2]/div[2]/div/div/button[1]').click()
+        driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[2]/div[2]/div/div/button[1]').click()
         sleep(randint(4,5))
         print("Playlist seguita!")
     except Exception as e:
