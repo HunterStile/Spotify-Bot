@@ -1,4 +1,10 @@
 # Spotify Bot
+-ULTIME MODIFICHE
+
+-patch 0.1.1
+-Ottimizzate ed aggiorante le funzioni del bot
+-Aggiunto l'utilizzo di proxy prima di far partire i vari applicativi con Proxifier
+-Utilizzo della versione Chrome Beta e del chromedriver 130.0.6723.6
 
 ## Descrizione
 Il Spotify-Bot è un programma che automatizza alcune operazioni su Spotify, consentendo agli utenti di creare account, seguire playlist, e ascoltare brani.
