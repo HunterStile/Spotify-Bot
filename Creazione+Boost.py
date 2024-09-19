@@ -15,6 +15,10 @@ print("Benvenuto nel bot Spotify by HunterStile!")
 #Variabili
 posizione = '11'
 
+#Scelta PROXY
+#config_file_name = random.choice(proxy_list)
+#changhe_proxy(config_file_name)  # Configura il proxy
+
 ripetizione = True
 while ripetizione == True:
     count = count + 1
@@ -37,8 +41,7 @@ while ripetizione == True:
 
     #Bosting canzoni
     scegli_playlist(driver,playlist1) #poppunk
-    Sento_canzone(driver,posizione)  
-    sleep(120)
+    Sento_canzone(driver,posizione) 
 
     #scelta ripetizione
     ripetizione = True
