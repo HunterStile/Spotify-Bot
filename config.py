@@ -15,7 +15,7 @@ configurazione_bot = {
     'ripetizione': True,
 
     # Configurazione Proxy
-    'usa_proxy': True,  # Abilita/disabilita l'uso dei proxy
+    'usa_proxy': False,  # Abilita/disabilita l'uso dei proxy
     'proxy_list': [
         'profilo1.ppx',
         'profilo2.ppx'
