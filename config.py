@@ -1,20 +1,15 @@
-# Lista dei profili proxy su proxifier disponibili
-proxy_list = [
-    'dinamico.ppx'
-]
+import random
 
-#playlist
-playlist1='https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC'  #pop-punk 
-playlist2='https://open.spotify.com/playlist/1qEvrxdkHTJdrtxHlG80Ry'  #trap-italia
-playlist3='https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R'  #new-generation
-playlist4='https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV'  #new-music
-playlist5='https://open.spotify.com/playlist/2EAacye5AQOZu9WN8Z5k4X'  #top-music
-playlist6='https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS'  #Indieitalia
+POSIZIONI_DISPONIBILI = ['1', '2', '3']
+MIN_POSIZIONI = 1
+MAX_POSIZIONI = 1
+MIN_RIPETIZIONI = 1
+MAX_RIPETIZIONI = 1
 
-# Esempio di configurazione nel file config.py
+
 configurazione_bot = {
     # Impostazioni generali
-    'crea_account': True,
+    'crea_account': False,
     'max_iterazioni': 3,
     'input_utente': False,
     'ripetizione': True,
@@ -22,7 +17,7 @@ configurazione_bot = {
     # Configurazione Proxy
     'usa_proxy': True,  # Abilita/disabilita l'uso dei proxy
     'proxy_list': [
-        'profilo1.ppx'
+        'profilo1.ppx',
         'profilo2.ppx'
     ],
     
@@ -34,21 +29,32 @@ configurazione_bot = {
         'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R',   # New Generation
         'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV',   # New Music
         'https://open.spotify.com/playlist/2EAacye5AQOZu9WN8Z5k4X',   # Top Music
-        'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS'    # Indie Italia
+        'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS',    # Indie Italia
+        'https://open.spotify.com/playlist/77EE22OcfpL3fL7wDkagpX',
+        'https://open.spotify.com/playlist/6ke0AGVivZiVVUkqSHWTAQ',
+        'https://open.spotify.com/playlist/1CZFCCGYLzYh1BpxAXHy4b',
+        'https://open.spotify.com/playlist/1Hgl2BCI250xGtyGFXuJpB',
+        'https://open.spotify.com/playlist/3F82VLnmyuQ0ujPQPnxdRy'      
     ],
     
     # Configurazione ascolto canzoni
-    'ascolta_canzoni': False,
-    'playlist_ascolto': 'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV',  # New Music
+    'ascolta_canzoni': True,
+    'playlist_ascolto': random.choice([
+        'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC',   
+        'https://open.spotify.com/playlist/1qEvrxdkHTJdrtxHlG80Ry',   
+        'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R',   
+        'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV',   
+        'https://open.spotify.com/playlist/2EAacye5AQOZu9WN8Z5k4X',   
+        'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS'
+    ]),
     
-    # Posizioni e ripetizioni di ascolto
-    'posizioni_ascolto': ['6', '3', '1'],  # Liste delle posizioni da ascoltare
+    # Posizioni e ripetizioni di ascolto casuali
+    'posizioni_ascolto': random.sample(POSIZIONI_DISPONIBILI, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI)),
     'ripetizioni_per_posizione': {
-        '6': 2,  # Ascolta 2 volte la posizione 6
-        '3': 1,  # Ascolta 1 volta la posizione 3
-        '1': 3   # Ascolta 3 volte la posizione 1
+        posizione: random.randint(MIN_RIPETIZIONI, MAX_RIPETIZIONI) 
+        for posizione in random.sample(POSIZIONI_DISPONIBILI, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI))
     },
     
     # Intervallo tra gli ascolti
-    'intervallo_ascolto': 120  # Secondi tra un ascolto e l'altro
+     'intervallo_ascolto': random.randint(120, 150)
 }

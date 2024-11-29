@@ -4,14 +4,9 @@ from funzioni.spotify_functions import *
 from config import *
 
 def esegui_bot_spotify(config):
-    """
-    Esegue il bot Spotify con configurazione dinamica e scalabile.
-    
-    :param config: Dizionario di configurazione avanzata
-    """
     count = 0
     ripetizione = True
-    
+
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
         count += 1
         print(f"{count}° Creazione")
@@ -20,21 +15,54 @@ def esegui_bot_spotify(config):
         driver = configurazione_browser()
         
         try:
-             # Gestione Proxy (opzionale)
+            # Gestione Proxy (opzionale)
             if config.get('usa_proxy', False):
                 proxy_list = config.get('proxy_list', [])
                 if proxy_list:
                     config_file_name = random.choice(proxy_list)
-                    changhe_proxy(config_file_name)  # Funzione per cambiare proxy
+                    changhe_proxy(config_file_name)
                     print(f"Proxy configurato: {config_file_name}")
-
                     
-            # Creazione account (opzionale)
+            # Creazione/Accesso account
             if config.get('crea_account', False):
+                # Crea nuovo account
                 credenziali = crea_account(driver)
                 email = credenziali[0]
                 password = credenziali[1]
                 driver = credenziali[2]
+            else:
+                # Carica account da CSV
+                with open(file, newline='', encoding='utf-8') as csvfile:
+                    csvreader = csv.reader(csvfile, delimiter=',')
+                    next(csvreader)  # salta intestazione
+                    
+                    # Leggi tutti gli account rimanenti
+                    accounts = list(csvreader)
+                    
+                    # Se non ci sono più account, esci dal ciclo
+                    if not accounts:
+                        print("Nessun account rimanente nel file CSV")
+                        break
+                    
+                    # Prendi il primo account disponibile
+                    row = accounts[0]
+                    email, password = row[0], row[1]
+                    
+                    errore = Accesso_spotify(driver, email, password)
+                    if errore:
+                        print("Accesso non riuscito, rimuovo questo account...")
+                        
+                        # Riscrivi il file CSV escludendo l'account che non ha funzionato
+                        with open(file, 'w', newline='', encoding='utf-8') as csvfile:
+                            csvwriter = csv.writer(csvfile)
+                            # Riscrivi l'intestazione
+                            csvwriter.writerow(['Email', 'Password'])
+                            # Riscrivi gli altri account
+                            for account in accounts[1:]:
+                                csvwriter.writerow(account)
+                        
+                        # Continua con il prossimo ciclo per provare con l'account successivo
+                        continue
             
             # Seguire playlist dinamicamente
             if config.get('segui_playlist', False):
@@ -53,7 +81,7 @@ def esegui_bot_spotify(config):
                 ripetizioni_per_posizione = config.get('ripetizioni_per_posizione', {})
                 
                 for posizione in posizioni:
-                    # Numero di ripetizioni per questa posizione (default 1 se non specificato)
+                    # Numero di ripetizioni per questa posizione
                     volte_ripetizione = ripetizioni_per_posizione.get(posizione, 1)
                     
                     for _ in range(volte_ripetizione):
@@ -77,7 +105,7 @@ def esegui_bot_spotify(config):
     
     print("Tutte le riproduzioni sono state eseguite!")
 
-    # Chiamata principale
+# Chiamata principale
 if __name__ == "__main__":
     print("Benvenuto nel bot Spotify by HunterStile!")
     esegui_bot_spotify(configurazione_bot)
