@@ -11,11 +11,13 @@ ASCOLTA_CANZONI = True
 
 #SCELTA DELLA PLAYLIST DOVE ASCOLTARE LE CANZONI
 PLAYLIST_SCELTA = [
-    'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC',   # Pop-Punk
+    'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC',
+    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R',   # New Generation
+    'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV'  # Pop-Punk
 ]
-POSIZIONI_SCELTE = ['3','4']
-MIN_POSIZIONI = 2
-MAX_POSIZIONI = 2
+POSIZIONI_SCELTE = ['1','4']
+MIN_POSIZIONI = 1
+MAX_POSIZIONI = 1
 MIN_RIPETIZIONI = 1
 MAX_RIPETIZIONI = 1
 INTERVALLO_ASCOLTO = random.randint(120, 150)
@@ -39,7 +41,7 @@ PLAYLIST_URLS = [
 configurazione_bot = {
     # Impostazioni generali
     'crea_account': CREAZIONE,
-    'max_iterazioni': 3,
+    'max_iterazioni': 100,
     'input_utente': False,
     'ripetizione': True,
 
