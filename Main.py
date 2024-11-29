@@ -86,7 +86,6 @@ def esegui_bot_spotify(config):
                     
                     for _ in range(volte_ripetizione):
                         Sento_canzone(driver, str(posizione))
-                        sleep(config.get('intervallo_ascolto', 120))
             
             # Input utente per continuare (opzionale)
             if config.get('input_utente', False):
