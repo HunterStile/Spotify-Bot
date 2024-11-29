@@ -1,15 +1,15 @@
 import random
 
-POSIZIONI_DISPONIBILI = ['1', '2', '3']
+POSIZIONI_DISPONIBILI = ['1', '2', '3', '4','5']
 MIN_POSIZIONI = 1
-MAX_POSIZIONI = 1
+MAX_POSIZIONI = 3
 MIN_RIPETIZIONI = 1
 MAX_RIPETIZIONI = 1
 
 
 configurazione_bot = {
     # Impostazioni generali
-    'crea_account': False,
+    'crea_account': True,
     'max_iterazioni': 3,
     'input_utente': False,
     'ripetizione': True,
