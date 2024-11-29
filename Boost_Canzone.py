@@ -12,7 +12,8 @@ print("Benvenuto nel bot Spotify by HunterStile!")
 #inde-italia - PLAYLIST6
 
 #variabili
-posizione=11
+primo=1
+secondo=2
 
 #Scelta PROXY
 #config_file_name = random.choice(proxy_list)
@@ -29,8 +30,10 @@ with open(file, newline='') as csvfile:
         driver = configurazione_browser()
         errore = Accesso_spotify(driver,email,password)
         if errore == False:
-            scegli_playlist(driver,playlist1) #poppunk
-            Sento_canzone(driver,posizione)
+            scegli_playlist(driver,playlist4) #poppunk
+            Sento_canzone(driver,primo)
+            Sento_canzone(driver,secondo)
+            
             
         else:
             print("Accesso non riusciuto, riprovo con il prossimo account...")

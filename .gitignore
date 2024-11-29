@@ -1,4 +1,7 @@
-account_spotify.csv
+# File di cache Python
+*.pyc
+__pycache__/
+# File account spotify creati dal bot
 acount_spotify_creati.csv
 
 
