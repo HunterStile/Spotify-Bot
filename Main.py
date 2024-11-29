@@ -44,7 +44,7 @@ def esegui_bot_spotify(config):
                         print("Nessun account rimanente nel file CSV")
                         break
                     
-                    # Prendi il primo account disponibile
+                    # Prendi il primo account
                     row = accounts[0]
                     email, password = row[0], row[1]
                     
@@ -63,6 +63,17 @@ def esegui_bot_spotify(config):
                         
                         # Continua con il prossimo ciclo per provare con l'account successivo
                         continue
+                    
+                    # Se l'accesso ha successo, sposta l'account in fondo al CSV
+                    with open(file, 'w', newline='', encoding='utf-8') as csvfile:
+                        csvwriter = csv.writer(csvfile)
+                        # Riscrivi l'intestazione
+                        csvwriter.writerow(['Email', 'Password'])
+                        # Riscrivi tutti gli altri account
+                        for account in accounts[1:]:
+                            csvwriter.writerow(account)
+                        # Aggiungi l'account usato in fondo
+                        csvwriter.writerow(row)
             
             # Seguire playlist dinamicamente
             if config.get('segui_playlist', False):
@@ -103,7 +114,7 @@ def esegui_bot_spotify(config):
             driver.close()
     
     print("Tutte le riproduzioni sono state eseguite!")
-
+    
 # Chiamata principale
 if __name__ == "__main__":
     print("Benvenuto nel bot Spotify by HunterStile!")
