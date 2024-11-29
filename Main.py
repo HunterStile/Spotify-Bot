@@ -4,12 +4,17 @@ from funzioni.spotify_functions import *
 from config import *
 
 def esegui_bot_spotify(config):
-    count = 0
+    count_creazione = 0
+    count_accesso = 0
     ripetizione = True
 
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
-        count += 1
-        print(f"{count}° Creazione")
+        if config.get('crea_account', False):
+            count_creazione += 1
+            print(f"{count_creazione}° Creazione")
+        else:
+            count_accesso += 1
+            print(f"{count_accesso}° Accesso")
         
         # Configurazione browser
         driver = configurazione_browser()
@@ -114,7 +119,7 @@ def esegui_bot_spotify(config):
             driver.close()
     
     print("Tutte le riproduzioni sono state eseguite!")
-    
+
 # Chiamata principale
 if __name__ == "__main__":
     print("Benvenuto nel bot Spotify by HunterStile!")
