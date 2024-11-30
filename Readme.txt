@@ -1,6 +1,16 @@
 # Spotify Bot
 -ULTIME MODIFICHE
 
+-patch 0.1.2
+-Aggiunto il componente Main.py
+-Aggiunto il componente config.py, con il quale si stabiliscono le caratteristiche per far partire il main.py
+il Main adesso puo :
+1-creare un accaount, o accedere ad un lista di account.
+2-seguire o meno delle playlist
+3-ascoltare o meno delle canzoni da playlist scelte.
+
+Nel caso si vuole accedere ad account gia esistente, impostare False in creazione nel config, e inseire la l'email e passoword nel file "account_spotify,csv"
+
 -patch 0.1.1
 -Ottimizzate ed aggiorante le funzioni del bot
 -Aggiunto l'utilizzo di proxy prima di far partire i vari applicativi con Proxifier
