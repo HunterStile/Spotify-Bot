@@ -22,16 +22,15 @@ def esegui_bot_spotify(config):
         try:
             # Gestione Proxy (opzionale)
             if config.get('usa_proxy', False):
-                proxy_list = config.get('proxy_list', [])
+                proxy_list = config.get('proxy_list_first', [])
                 if proxy_list:
-                    config_file_name = "dinamico.ppx"
+                    config_file_name = random.choice(proxy_list)
                     changhe_proxy(config_file_name)
-                    print(f"Proxy configurato: {config_file_name}")
                     
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
-                credenziali = crea_account(driver)
+                credenziali = crea_account(driver,PROXY)
                 email = credenziali[0]
                 password = credenziali[1]
                 driver = credenziali[2]

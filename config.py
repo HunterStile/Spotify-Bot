@@ -8,7 +8,11 @@ PROXY = True
 SEGUI_PLAYLIST = True
 #scegliere se ablitare la routine di ascoltare canzoni
 ASCOLTA_CANZONI = True
-
+#scegliere i profili proxy da ruotare.
+PROXYLIST = [
+    'profilo1.ppx',
+    'profilo2.ppx'
+]
 #SCELTA DELLA PLAYLIST DOVE ASCOLTARE LE CANZONI
 PLAYLIST_SCELTA = [
     'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC',
@@ -36,7 +40,6 @@ PLAYLIST_URLS = [
     'https://open.spotify.com/playlist/3F82VLnmyuQ0ujPQPnxdRy'
 ]
 
-
 configurazione_bot = {
     # Impostazioni generali
     'crea_account': CREAZIONE,
@@ -46,11 +49,11 @@ configurazione_bot = {
 
     # Configurazione Proxy
     'usa_proxy': PROXY,  # Abilita/disabilita l'uso dei proxy
-    'proxy_list': [
-        'profilo1.ppx',
-        'profilo2.ppx',
+    'proxy_list': PROXYLIST,
+    'proxy_list_first': [
+        'dinamico.ppx'
     ],
-    
+
     # Configurazione playlist da seguire
     'segui_playlist': SEGUI_PLAYLIST,
     'playlist_urls': PLAYLIST_URLS,

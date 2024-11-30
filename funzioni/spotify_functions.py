@@ -22,6 +22,7 @@ import re
 import os
 import subprocess
 import pyautogui
+from config import *
 
 # Ottieni il percorso assoluto della directory corrente (dove si trova il file eseguibile)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -57,6 +58,7 @@ def changhe_proxy(config_file_name):
     sleep(2)
     pyautogui.press('enter')
     sleep(10)
+    print(f"Proxy configurato: {config_file_name}")   
 
 #Configurazione del browser
 def configurazione_browser():
@@ -124,7 +126,7 @@ def leggi_txt(nome_file):
 # FUNZIONI SPOTIFY #
 
 #Crea un account spotify
-def crea_account(driver):
+def crea_account(driver,proxy):
     #variabili - logiche
     robot2 = False
     robot = False
@@ -210,21 +212,10 @@ def crea_account(driver):
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="__next"]/main/main/section/div/form/div[2]/button/span[1]').click()
     sleep(randint(6,7))
-    
-    proxy_list = ['profilo1.ppx', 'profilo2.ppx']
-    config_file_name = random.choice(proxy_list)
-    proxifier_exe_path = "C:\\Program Files (x86)\\Proxifier\\proxifier.exe"
-    config_file_path = "C:\\Users\\Luigi\\AppData\\Roaming\\Proxifier4\\Profiles\\" + config_file_name
-    command = f'"{proxifier_exe_path}" -load "{config_file_path}"'
-    subprocess.Popen(command)
-    sleep(2)
-    pyautogui.press('enter')
-    sleep(2)
-    pyautogui.press('enter')
-    sleep(10)
-
-    print(f"Proxy configurato: {config_file_name}")                
-    
+    if proxy == True :
+        config_file_name = random.choice(PROXYLIST)
+        changhe_proxy(config_file_name)
+      
     #FINE CREAZIONE ACCCOUNT
     
     #CHECK ROBOT
