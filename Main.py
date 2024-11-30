@@ -1,0 +1,126 @@
+import random
+from time import sleep
+from funzioni.spotify_functions import *
+from config import *
+
+def esegui_bot_spotify(config):
+    count_creazione = 0
+    count_accesso = 0
+    ripetizione = True
+
+    while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
+        if config.get('crea_account', False):
+            count_creazione += 1
+            print(f"{count_creazione}° Creazione")
+        else:
+            count_accesso += 1
+            print(f"{count_accesso}° Accesso")
+        
+        # Configurazione browser
+        driver = configurazione_browser()
+        
+        try:
+            # Gestione Proxy (opzionale)
+            if config.get('usa_proxy', False):
+                proxy_list = config.get('proxy_list', [])
+                if proxy_list:
+                    config_file_name = random.choice(proxy_list)
+                    changhe_proxy(config_file_name)
+                    print(f"Proxy configurato: {config_file_name}")
+                    
+            # Creazione/Accesso account
+            if config.get('crea_account', False):
+                # Crea nuovo account
+                credenziali = crea_account(driver)
+                email = credenziali[0]
+                password = credenziali[1]
+                driver = credenziali[2]
+            else:
+                # Carica account da CSV
+                with open(file, newline='', encoding='utf-8') as csvfile:
+                    csvreader = csv.reader(csvfile, delimiter=',')
+                    next(csvreader)  # salta intestazione
+                    
+                    # Leggi tutti gli account rimanenti
+                    accounts = list(csvreader)
+                    
+                    # Se non ci sono più account, esci dal ciclo
+                    if not accounts:
+                        print("Nessun account rimanente nel file CSV")
+                        break
+                    
+                    # Prendi il primo account
+                    row = accounts[0]
+                    email, password = row[0], row[1]
+                    
+                    errore = Accesso_spotify(driver, email, password)
+                    if errore:
+                        print("Accesso non riuscito, rimuovo questo account...")
+                        
+                        # Riscrivi il file CSV escludendo l'account che non ha funzionato
+                        with open(file, 'w', newline='', encoding='utf-8') as csvfile:
+                            csvwriter = csv.writer(csvfile)
+                            # Riscrivi l'intestazione
+                            csvwriter.writerow(['Email', 'Password'])
+                            # Riscrivi gli altri account
+                            for account in accounts[1:]:
+                                csvwriter.writerow(account)
+                        
+                        # Continua con il prossimo ciclo per provare con l'account successivo
+                        continue
+                    
+                    # Se l'accesso ha successo, sposta l'account in fondo al CSV
+                    with open(file, 'w', newline='', encoding='utf-8') as csvfile:
+                        csvwriter = csv.writer(csvfile)
+                        # Riscrivi l'intestazione
+                        csvwriter.writerow(['Email', 'Password'])
+                        # Riscrivi tutti gli altri account
+                        for account in accounts[1:]:
+                            csvwriter.writerow(account)
+                        # Aggiungi l'account usato in fondo
+                        csvwriter.writerow(row)
+            
+            # Seguire playlist dinamicamente
+            if config.get('segui_playlist', False):
+                playlist_da_seguire = config.get('playlist_urls', [])
+                for playlist in playlist_da_seguire:
+                    seguo_playlist(driver, playlist)
+            
+            # Ascoltare canzoni con configurazione avanzata
+            if config.get('ascolta_canzoni', False):
+                # Playlist per l'ascolto
+                playlist_ascolto = config.get('playlist_ascolto', '')
+                scegli_playlist(driver, playlist_ascolto)
+                
+                # Configurazione ascolto canzone
+                posizioni = config.get('posizioni_ascolto', [])
+                ripetizioni_per_posizione = config.get('ripetizioni_per_posizione', {})
+                
+                for posizione in posizioni:
+                    # Numero di ripetizioni per questa posizione
+                    volte_ripetizione = ripetizioni_per_posizione.get(posizione, 1)
+                    
+                    for _ in range(volte_ripetizione):
+                        Sento_canzone(driver, str(posizione))
+            
+            # Input utente per continuare (opzionale)
+            if config.get('input_utente', False):
+                risposta = input("Vuoi continuare con un'altra iterazione? (s/n): ")
+                ripetizione = risposta.lower() == 's'
+            else:
+                # Se non è richiesto input utente, usa il valore di default
+                ripetizione = config.get('ripetizione', False)
+        
+        except Exception as e:
+            print(f"Errore durante l'esecuzione: {e}")
+        
+        finally:
+            # Chiudi sempre il driver
+            driver.close()
+    
+    print("Tutte le riproduzioni sono state eseguite!")
+
+# Chiamata principale
+if __name__ == "__main__":
+    print("Benvenuto nel bot Spotify by HunterStile!")
+    esegui_bot_spotify(configurazione_bot)

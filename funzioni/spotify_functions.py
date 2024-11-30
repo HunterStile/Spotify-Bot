@@ -31,24 +31,22 @@ setup_dir = os.path.join(current_dir, 'Setup')
 path_chrome = os.path.join(setup_dir, 'path_chrome.txt')
 path_driver = os.path.join(setup_dir, 'path_driver.txt')
 
-#Variabili
-file = 'account_spotify.csv'
-file_premium = 'account_spotify_premium.csv'
-a = 1
-b = 2
-count = 0
-vuoto = 'NAN'
-riproduzioni = 0
+#Variabili per il funzionamento
+file = 'account_spotify.csv'       #CSV per eseguire gli accessi agli account              
+a = 1                              #tempo minimo di attesa negli slepp 
+b = 2                              #tempo massimo di attesa negli slepp
+count = 0                          #sommattore generico
 
+#XPATH dei bottoni spotify
 menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div/div[5]/button[2]'
 aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
 posizione_brano = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div/div[1]'
 posizione_seguo_playlist = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[2]/div[2]/div/div/button[1]'
                     
 
+# FUNZIONI BASE #
 
-#Funzioni
-
+#Inserisce il proxy dato
 def changhe_proxy(config_file_name):
     proxifier_exe_path = "C:\\Program Files (x86)\\Proxifier\\proxifier.exe"
     config_file_path = "C:\\Users\\Luigi\\AppData\\Roaming\\Proxifier4\\Profiles\\" + config_file_name
@@ -60,6 +58,7 @@ def changhe_proxy(config_file_name):
     pyautogui.press('enter')
     sleep(10)
 
+#Configurazione del browser
 def configurazione_browser():
     chrome_driver_path = leggi_txt(path_driver)
     chrome_options = webdriver.ChromeOptions()
@@ -70,16 +69,34 @@ def configurazione_browser():
     sleep(randint(a,b))
     return driver
 
+#Genero l'indirizzo completo
 def generate_xpath(base_xpath, n):
     return base_xpath.format(n)
 
+#Genero una random string
 def generate_random_string(length):
     # definisce i caratteri alfanumerici possibili
     characters = string.ascii_letters + string.digits
     # genera una stringa casuale di lunghezza data
     return ''.join(random.choice(characters) for i in range(length))
 
-def check_conferma(driver):
+#Rimuove duplicati da un csv
+def rimuovi_duplicati(file_input, file_output):
+    with open(file_input, newline='') as csvfile_input, \
+            open(file_output, 'w', newline='') as csvfile_output:
+        reader = csv.reader(csvfile_input)
+        writer = csv.writer(csvfile_output)
+        # set per tenere traccia delle righe già lette
+        seen = set()
+        for row in reader:
+            # trasforma la riga in una tupla di stringhe, in modo che sia hashabile
+            row_tuple = tuple(str(cell) for cell in row)
+            if row_tuple not in seen:
+                writer.writerow(row)
+                seen.add(row_tuple)
+
+#Ritorna il body della pagina 
+def check_conferma(driver): 
     try:
         # Aspetta che il corpo della pagina sia presente prima di estrarre il testo
         body_element = WebDriverWait(driver, 10).until(
@@ -91,31 +108,22 @@ def check_conferma(driver):
         print(f"Errore durante l'estrazione del testo: {str(e)}")
     return page_text
 
-def posizione_scelta(driver,posizione):
-    sleep(randint(2,3))
+#Legge un txt
+def leggi_txt(nome_file):
     try:
-    # Aspetta che l'elemento sia cliccabile
-        element = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, posizione))
-    )
-        # Registra l'inizio dell'attesa
-        start_time = time()
-
-        actions = ActionChains(driver)
-        actions.double_click(element).perform()
-
-        # Attendi un periodo di tempo casuale
-        sleep(randint(120, 160))
-        # Registra la fine dell'attesa
-        end_time = time()
-        # Calcola la differenza di tempo
-        tempo_attesa = end_time - start_time
-        print(f"Tempo effettivo di attesa: {tempo_attesa:.2f} secondi")
-
+        with open(nome_file, 'r') as file:
+            prima_riga = file.readline().strip()  # Legge la prima riga e rimuove eventuali spazi bianchi iniziali/finali
+            return prima_riga
+    except FileNotFoundError:
+        print(f"Errore: Il file '{nome_file}' non è stato trovato.")
+        return None
     except Exception as e:
-        print(f"Errore durante il clic: {str(e)}")
-        sleep(randint(120, 160))
+        print(f"Errore durante la lettura del file '{nome_file}': {e}")
+        return None
+    
+# FUNZIONI SPOTIFY #
 
+#Crea un account spotify
 def crea_account(driver):
     #variabili - logiche
     robot2 = False
@@ -243,6 +251,7 @@ def crea_account(driver):
 
     return email,password,driver
 
+#Seguo la playlist
 def seguo_playlist(driver,link):
     try:
         driver.get(link)
@@ -254,6 +263,7 @@ def seguo_playlist(driver,link):
         print(f"Errore durante il clic: {str(e)}")
         sleep(randint(4,5)) 
         
+#Accedi ad un account spotify
 def Accesso_spotify(driver,email,password):
     link_accesso = 'https://open.spotify.com/'
     driver.get(link_accesso)
@@ -275,77 +285,21 @@ def Accesso_spotify(driver,email,password):
     else:
         print("Errore, dati non corretti.")
     return errore
-        
-def rimuovi_duplicati(file_input, file_output):
-    with open(file_input, newline='') as csvfile_input, \
-            open(file_output, 'w', newline='') as csvfile_output:
-        reader = csv.reader(csvfile_input)
-        writer = csv.writer(csvfile_output)
-        # set per tenere traccia delle righe già lette
-        seen = set()
-        for row in reader:
-            # trasforma la riga in una tupla di stringhe, in modo che sia hashabile
-            row_tuple = tuple(str(cell) for cell in row)
-            if row_tuple not in seen:
-                writer.writerow(row)
-                seen.add(row_tuple)
 
-def leggi_txt(nome_file):
-    try:
-        with open(nome_file, 'r') as file:
-            prima_riga = file.readline().strip()  # Legge la prima riga e rimuove eventuali spazi bianchi iniziali/finali
-            return prima_riga
-    except FileNotFoundError:
-        print(f"Errore: Il file '{nome_file}' non è stato trovato.")
-        return None
-    except Exception as e:
-        print(f"Errore durante la lettura del file '{nome_file}': {e}")
-        return None
-
-def Sento_canzoni(driver,conteggio,all_posizione,prima_posizione,seconda_posizione,terza_posizione):
-    numero_riproduzione = 0
-    boosting = False
-    posizione_prec = 'Nan'
-    while numero_riproduzione <= conteggio:
-        numero_riproduzione = numero_riproduzione + 1
-        print(numero_riproduzione,"° riproduzione")
-        if boosting == False:
-            boosting = True
-            print("Primo busting")
-            posizione = prima_posizione
-            print(posizione)
-            posizione_scelta(driver,posizione)
-            if seconda_posizione != "NAN":
-                print("secondo busting")
-                posizione = seconda_posizione
-                print(posizione)
-                posizione_scelta(driver,posizione)
-            if terza_posizione != "NAN":
-                print("Terzo busting")
-                posizione = terza_posizione
-                print(posizione)
-                posizione_scelta(driver,posizione)
-        else:
-            posizione = random.choice(all_posizione)
-            print("casuale")
-            print(posizione)
-            while posizione == posizione_prec:
-                print("Scelta di nuovo la stessa posizione, riprovo")
-                posizione = random.choice(all_posizione)
-            posizione_scelta(driver,posizione)
-            posizione_prec=posizione
-
+#Ascolto una specifica canzone in una playlit
 def Sento_canzone(driver,posizione):
     print("Ascolto la canzone..")
     xpath = generate_xpath(posizione_brano,posizione)
     print(f"posizione :",posizione)
     posizione_scelta(driver,xpath)
-             
+
+#Carico la pagina web di una playlist
 def scegli_playlist(driver,playlist_scelta):
     print("Vado sulla playlist..")
     driver.get(playlist_scelta)
     sleep(randint(3,4))
 
+#Elimino un brano dalla playlist
 def elimina_brano(driver, posizione):
     print("Elimino la canzone..")     
     sleep(randint(2,3))
@@ -356,6 +310,7 @@ def elimina_brano(driver, posizione):
     sleep(randint(a,b))
     print("Canzone eliminata!")
 
+#Aggiungo uyn brano dalla playlist
 def aggiungi_brano(driver, posizione, playlist_target,posizione_playlist):
     print("Vado sulla playlist..")
     driver.get(playlist_target)
@@ -371,7 +326,31 @@ def aggiungi_brano(driver, posizione, playlist_target,posizione_playlist):
     driver.find_element(By.XPATH,xpath).click() 
     print("Canzone aggiunta!")
 
+#Clicco il punto di una canzone
+def posizione_scelta(driver,posizione):
+    sleep(randint(2,3))
+    try:
+    # Aspetta che l'elemento sia cliccabile
+        element = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, posizione))
+    )
+        # Registra l'inizio dell'attesa
+        start_time = time()
 
+        actions = ActionChains(driver)
+        actions.double_click(element).perform()
+
+        # Attendi un periodo di tempo casuale
+        sleep(randint(120, 160))
+        # Registra la fine dell'attesa
+        end_time = time()
+        # Calcola la differenza di tempo
+        tempo_attesa = end_time - start_time
+        print(f"Tempo effettivo di attesa: {tempo_attesa:.2f} secondi")
+
+    except Exception as e:
+        print(f"Errore durante il clic: {str(e)}")
+        sleep(randint(120, 160))
 
 
 
