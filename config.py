@@ -3,7 +3,7 @@ import random
 # Scegli se eseguere una nuova creazione con True, accessi ad account gia creati scritti in account_spotify.csv con False 
 CREAZIONE = True
 #scegliere True per usare proxy, False senza.
-PROXY = False
+PROXY = True
 #scegliere se abilitare la routine di seguire le playlist
 SEGUI_PLAYLIST = True
 #scegliere se ablitare la routine di ascoltare canzoni
@@ -20,7 +20,6 @@ MIN_POSIZIONI = 1
 MAX_POSIZIONI = 1
 MIN_RIPETIZIONI = 1
 MAX_RIPETIZIONI = 1
-INTERVALLO_ASCOLTO = random.randint(120, 150)
 
 # SCELTA DELLE PLAYLIST
 PLAYLIST_URLS = [
@@ -49,7 +48,7 @@ configurazione_bot = {
     'usa_proxy': PROXY,  # Abilita/disabilita l'uso dei proxy
     'proxy_list': [
         'profilo1.ppx',
-        'profilo2.ppx'
+        'profilo2.ppx',
     ],
     
     # Configurazione playlist da seguire
@@ -66,6 +65,4 @@ configurazione_bot = {
         for posizione in random.sample(POSIZIONI_SCELTE, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI))
     },
     
-    # Intervallo tra gli ascolti
-     'intervallo_ascolto': INTERVALLO_ASCOLTO
 }

@@ -15,7 +15,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 import string
 from faker import Faker
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 import re
@@ -169,9 +169,14 @@ def crea_account(driver):
     
     #CREAZIONE ACCOUNT
     driver.get(link)
-    print("account in creazione...")
+    print("Account in creazione...")
     sleep(randint(5,6))             
-    driver.find_element(By.ID,'onetrust-accept-btn-handler').click()
+    try:
+            WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.ID, 'onetrust-accept-btn-handler'))
+            ).click()
+    except (NoSuchElementException, TimeoutException):
+            print("Pulsante cookie non trovato o non cliccabile. Continuo.")
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="username"]').send_keys(email)
     sleep(randint(a,b))           
@@ -206,6 +211,19 @@ def crea_account(driver):
     driver.find_element(By.XPATH,'//*[@id="__next"]/main/main/section/div/form/div[2]/button/span[1]').click()
     sleep(randint(6,7))
     
+    proxy_list = ['profilo1.ppx', 'profilo2.ppx']
+    config_file_name = random.choice(proxy_list)
+    proxifier_exe_path = "C:\\Program Files (x86)\\Proxifier\\proxifier.exe"
+    config_file_path = "C:\\Users\\Luigi\\AppData\\Roaming\\Proxifier4\\Profiles\\" + config_file_name
+    command = f'"{proxifier_exe_path}" -load "{config_file_path}"'
+    subprocess.Popen(command)
+    sleep(2)
+    pyautogui.press('enter')
+    sleep(2)
+    pyautogui.press('enter')
+    sleep(10)
+
+    print(f"Proxy configurato: {config_file_name}")                
     
     #FINE CREAZIONE ACCCOUNT
     

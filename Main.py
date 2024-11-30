@@ -24,7 +24,7 @@ def esegui_bot_spotify(config):
             if config.get('usa_proxy', False):
                 proxy_list = config.get('proxy_list', [])
                 if proxy_list:
-                    config_file_name = random.choice(proxy_list)
+                    config_file_name = "dinamico.ppx"
                     changhe_proxy(config_file_name)
                     print(f"Proxy configurato: {config_file_name}")
                     
