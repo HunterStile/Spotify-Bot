@@ -30,7 +30,7 @@ def esegui_bot_spotify(config):
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
-                credenziali = crea_account(driver,PROXY)
+                credenziali = crea_account(driver,DOPPIOPROXY)
                 email = credenziali[0]
                 password = credenziali[1]
                 driver = credenziali[2]

@@ -4,6 +4,7 @@ import random
 CREAZIONE = True
 #scegliere True per usare proxy, False senza.
 PROXY = True
+DOPPIOPROXY = False
 #scegliere se abilitare la routine di seguire le playlist
 SEGUI_PLAYLIST = True
 #scegliere se ablitare la routine di ascoltare canzoni
@@ -51,7 +52,7 @@ configurazione_bot = {
     'usa_proxy': PROXY,  # Abilita/disabilita l'uso dei proxy
     'proxy_list': PROXYLIST,
     'proxy_list_first': PROXYLIST,
-    
+
     # Configurazione playlist da seguire
     'segui_playlist': SEGUI_PLAYLIST,
     'playlist_urls': PLAYLIST_URLS,
