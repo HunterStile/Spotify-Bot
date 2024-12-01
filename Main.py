@@ -25,7 +25,7 @@ def esegui_bot_spotify(config):
                 proxy_list = config.get('proxy_list_first', [])
                 if proxy_list:
                     config_file_name = random.choice(proxy_list)
-                    changhe_proxy(config_file_name)
+                    change_proxy(config_file_name)
                     
             # Creazione/Accesso account
             if config.get('crea_account', False):

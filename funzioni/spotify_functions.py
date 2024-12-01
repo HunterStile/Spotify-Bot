@@ -18,19 +18,22 @@ from faker import Faker
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
-import re
+import sys
 import os
 import subprocess
 import pyautogui
-from config import *
 
 # Ottieni il percorso assoluto della directory corrente (dove si trova il file eseguibile)
 current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)  # Directory superiore
+sys.path.append(parent_dir)  # Aggiungi al sys.path
 # Costruisci il percorso assoluto della cartella "Setup"
 setup_dir = os.path.join(current_dir, 'Setup')
 # Costruisci i percorsi assoluti dei file di testo
 path_chrome = os.path.join(setup_dir, 'path_chrome.txt')
 path_driver = os.path.join(setup_dir, 'path_driver.txt')
+
+from config import *
 
 #Variabili per il funzionamento
 file = 'account_spotify.csv'       #CSV per eseguire gli accessi agli account              
@@ -47,18 +50,34 @@ posizione_seguo_playlist = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[
 
 # FUNZIONI BASE #
 
-#Inserisce il proxy dato
-def changhe_proxy(config_file_name):
+# Funzione per terminare connessioni precedenti
+def reset_network_connections():
+    print("Terminazione delle connessioni di rete in corso...")
+    try:
+        subprocess.run('netsh interface ip reset', shell=True, check=True)
+        print("Connessioni di rete resettate con successo.")
+    except subprocess.CalledProcessError:
+        print("Errore nel reset delle connessioni di rete.")
+
+# Funzione per configurare il proxy
+def change_proxy(config_file_name):
+    reset_network_connections()  # Termina connessioni precedenti
+
     proxifier_exe_path = "C:\\Program Files (x86)\\Proxifier\\proxifier.exe"
-    config_file_path = "C:\\Users\\Luigi\\AppData\\Roaming\\Proxifier4\\Profiles\\" + config_file_name
+    config_file_path = f"C:\\Users\\Luigi\\AppData\\Roaming\\Proxifier4\\Profiles\\{config_file_name}"
     command = f'"{proxifier_exe_path}" -load "{config_file_path}"'
-    subprocess.Popen(command)
-    sleep(2)
-    pyautogui.press('enter')
-    sleep(2)
-    pyautogui.press('enter')
-    sleep(10)
-    print(f"Proxy configurato: {config_file_name}")   
+
+    print("Configurazione del nuovo proxy...")
+    try:
+        subprocess.Popen(command, shell=True)
+        sleep(2)  # Aspetta che il comando venga eseguito
+        pyautogui.press('enter')
+        sleep(2)
+        pyautogui.press('enter')
+        sleep(10)  # Tempo aggiuntivo per completare l'operazione
+        print(f"Proxy configurato: {config_file_name}")
+    except Exception as e:
+        print(f"Errore durante la configurazione del proxy: {e}")
 
 #Configurazione del browser
 def configurazione_browser():
@@ -214,7 +233,7 @@ def crea_account(driver,proxy):
     sleep(randint(6,7))
     if proxy == True :
         config_file_name = random.choice(PROXYLIST)
-        changhe_proxy(config_file_name)
+        change_proxy(config_file_name)
       
     #FINE CREAZIONE ACCCOUNT
     

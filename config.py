@@ -50,10 +50,8 @@ configurazione_bot = {
     # Configurazione Proxy
     'usa_proxy': PROXY,  # Abilita/disabilita l'uso dei proxy
     'proxy_list': PROXYLIST,
-    'proxy_list_first': [
-        'dinamico.ppx'
-    ],
-
+    'proxy_list_first': PROXYLIST,
+    
     # Configurazione playlist da seguire
     'segui_playlist': SEGUI_PLAYLIST,
     'playlist_urls': PLAYLIST_URLS,
