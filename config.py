@@ -3,7 +3,7 @@ import random
 # Scegli se eseguere una nuova creazione con True, accessi ad account gia creati scritti in account_spotify.csv con False 
 CREAZIONE = True
 #scegliere True per usare proxy, False senza.
-PROXY = True
+PROXY = False
 DOPPIOPROXY = False
 #scegliere se abilitare la routine di seguire le playlist
 SEGUI_PLAYLIST = True
