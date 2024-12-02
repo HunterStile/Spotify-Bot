@@ -17,9 +17,18 @@ PROXYLIST = [
 #SCELTA DELLA PLAYLIST DOVE ASCOLTARE LE CANZONI
 PLAYLIST_SCELTA = [
     'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC',
-    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R',   # New Generation
-    'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV'  # Pop-Punk
+    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R:1,2,5',   # New Generation with static positions
+    'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV:3,2'  # Pop-Punk with static positions
 ]
+
+MODALITA_POSIZIONI = 'statico'  # Valori possibili: 'random' o 'statico'
+
+PLAYLIST_POSIZIONI = {
+    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R': ['1', '2', '5'],
+    'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV': ['3', '2'],
+    # Puoi aggiungere altre playlist con le loro posizioni
+}
+
 POSIZIONI_SCELTE = ['1','4','7']
 MIN_POSIZIONI = 1
 MAX_POSIZIONI = 3
@@ -59,14 +68,30 @@ configurazione_bot = {
     'segui_playlist': SEGUI_PLAYLIST,
     'playlist_urls': PLAYLIST_URLS,
     
+    # Nuovo flag per la modalità di selezione delle posizioni
+    'modalita_posizioni': MODALITA_POSIZIONI,
+    'playlist_posizioni_fisse': PLAYLIST_POSIZIONI,
+    
     # Configurazione ascolto canzoni
     'ascolta_canzoni': ASCOLTA_CANZONI,
-    'playlist_ascolto': random.choice(PLAYLIST_SCELTA),
-    # Posizioni e ripetizioni di ascolto casuali
-    'posizioni_ascolto': random.sample(POSIZIONI_SCELTE, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI)),
-    'ripetizioni_per_posizione': {
-        posizione: random.randint(MIN_RIPETIZIONI, MAX_RIPETIZIONI) 
-        for posizione in random.sample(POSIZIONI_SCELTE, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI))
-    },
     
+    # Mantieni la logica di generazione casuale
+    'posizioni_ascolto': (
+        random.sample(POSIZIONI_SCELTE, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI))
+        if MODALITA_POSIZIONI == 'random' 
+        else list(PLAYLIST_POSIZIONI.values())[0]
+    ),
+    'ripetizioni_per_posizione': (
+        {
+            posizione: random.randint(MIN_RIPETIZIONI, MAX_RIPETIZIONI) 
+            for posizione in (
+                random.sample(POSIZIONI_SCELTE, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI))
+            )
+        }
+        if MODALITA_POSIZIONI == 'random'
+        else {
+            posizione: random.randint(MIN_RIPETIZIONI, MAX_RIPETIZIONI) 
+            for posizione in list(PLAYLIST_POSIZIONI.values())[0]
+        }
+    ),
 }

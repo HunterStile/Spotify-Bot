@@ -46,6 +46,8 @@ class SpotifyBotGUI:
         self.max_posizioni_var = tk.IntVar(value=config_module.MAX_POSIZIONI)
         self.min_ripetizioni_var = tk.IntVar(value=config_module.MIN_RIPETIZIONI)
         self.max_ripetizioni_var = tk.IntVar(value=config_module.MAX_RIPETIZIONI)
+
+        self.modalita_posizioni_var = tk.StringVar(value=config_module.MODALITA_POSIZIONI)
         
         # Bot Thread
         self.bot_thread = None
@@ -86,6 +88,16 @@ class SpotifyBotGUI:
         playlist_urls_text.pack(padx=5, pady=5, fill='both', expand=True)
         playlist_urls_text.bind('<KeyRelease>', lambda e: self.playlist_urls_var.set(playlist_urls_text.get("1.0", tk.END).strip()))
         
+        # Aggiungi questo dopo gli altri widget di configurazione
+        modalita_frame = ttk.LabelFrame(self.master, text="Position Selection Mode")
+        modalita_frame.pack(padx=10, pady=10, fill='x')
+        
+        random_radio = ttk.Radiobutton(modalita_frame, text="Random", variable=self.modalita_posizioni_var, value='random')
+        random_radio.pack(side='left', padx=10)
+        
+        statico_radio = ttk.Radiobutton(modalita_frame, text="Static", variable=self.modalita_posizioni_var, value='statico')
+        statico_radio.pack(side='left', padx=10)
+
         # Playlist Scelte
         playlist_scelte_frame = ttk.LabelFrame(self.master, text="Playlists to Listen (one per line)")
         playlist_scelte_frame.pack(padx=10, pady=10, fill='both', expand=True)
@@ -156,6 +168,13 @@ class SpotifyBotGUI:
             'playlist_urls': self.playlist_urls_var.get().split('\n'),
             
             'ascolta_canzoni': self.ascolta_canzoni_var.get(),
+
+            'modalita_posizioni': self.modalita_posizioni_var.get(),
+            'playlist_posizioni_fisse': {
+                url.split(':')[0]: url.split(':')[1].split(',') 
+                for url in self.playlist_posizioni_fisse_var.get().split('\n')
+                if ':' in url
+            },
             'playlist_ascolto': random.choice(self.playlist_scelte_var.get().split('\n')),
             
             'posizioni_ascolto': random.sample(self.posizioni_scelte_var.get().split('\n'), 

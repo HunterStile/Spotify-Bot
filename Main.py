@@ -7,8 +7,11 @@ def esegui_bot_spotify(config):
     count_creazione = 0
     count_accesso = 0
     ripetizione = True
+    count = 0  # Initialize count for tracking iterations
 
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
+        count += 1  # Increment iteration count
+
         if config.get('crea_account', False):
             count_creazione += 1
             print(f"{count_creazione}° Creazione")
@@ -30,7 +33,7 @@ def esegui_bot_spotify(config):
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
-                credenziali = crea_account(driver,DOPPIOPROXY)
+                credenziali = crea_account(driver, DOPPIOPROXY)
                 email = credenziali[0]
                 password = credenziali[1]
                 driver = credenziali[2]
@@ -87,14 +90,39 @@ def esegui_bot_spotify(config):
             
             # Ascoltare canzoni con configurazione avanzata
             if config.get('ascolta_canzoni', False):
+                # Determina la modalità di selezione delle posizioni
+                modalita_posizioni = config.get('modalita_posizioni', 'random')
+                
                 # Playlist per l'ascolto
                 playlist_ascolto = config.get('playlist_ascolto', '')
                 scegli_playlist(driver, playlist_ascolto)
                 
-                # Configurazione ascolto canzone
-                posizioni = config.get('posizioni_ascolto', [])
-                ripetizioni_per_posizione = config.get('ripetizioni_per_posizione', {})
+                # Gestisci diverse modalità di selezione delle posizioni
+                if modalita_posizioni == 'random':
+                    # Logica di selezione casuale
+                    posizioni = config.get('posizioni_ascolto', [])
+                    ripetizioni_per_posizione = config.get('ripetizioni_per_posizione', {})
                 
+                elif modalita_posizioni == 'statico':
+                    # Logica di selezione statica basata sulle playlist specificate
+                    playlist_posizioni_fisse = config.get('playlist_posizioni_fisse', {})
+                    
+                    # Se la playlist corrente è nelle posizioni fisse, usa quelle
+                    if playlist_ascolto in playlist_posizioni_fisse:
+                        posizioni = playlist_posizioni_fisse[playlist_ascolto]
+                        
+                        # Genera ripetizioni per le posizioni statiche
+                        ripetizioni_per_posizione = {
+                            posizione: random.randint(config.get('MIN_RIPETIZIONI', 1), 
+                                                      config.get('MAX_RIPETIZIONI', 3)) 
+                            for posizione in posizioni
+                        }
+                    else:
+                        # Fallback alla modalità random se la playlist non ha posizioni specificate
+                        posizioni = config.get('posizioni_ascolto', [])
+                        ripetizioni_per_posizione = config.get('ripetizioni_per_posizione', {})
+                
+                # Esegui l'ascolto delle canzoni
                 for posizione in posizioni:
                     # Numero di ripetizioni per questa posizione
                     volte_ripetizione = ripetizioni_per_posizione.get(posizione, 1)
