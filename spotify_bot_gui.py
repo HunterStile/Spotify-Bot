@@ -4,6 +4,7 @@ import threading
 import sys
 import os
 import importlib.util
+import ctypes
 
 # Import the existing bot configuration and execution function
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -39,11 +40,17 @@ class SpotifyBotGUI:
         
         # Posizioni Scelte
         self.posizioni_scelte_var = tk.StringVar(value='\n'.join(config_module.POSIZIONI_SCELTE))
+
+        # Aggiungi questi nuovi attributi nella __init__
+        self.min_posizioni_var = tk.IntVar(value=config_module.MIN_POSIZIONI)
+        self.max_posizioni_var = tk.IntVar(value=config_module.MAX_POSIZIONI)
+        self.min_ripetizioni_var = tk.IntVar(value=config_module.MIN_RIPETIZIONI)
+        self.max_ripetizioni_var = tk.IntVar(value=config_module.MAX_RIPETIZIONI)
         
         # Bot Thread
         self.bot_thread = None
         self.stop_event = threading.Event()
-        
+
         self.create_widgets()
         
     def create_widgets(self):
@@ -95,6 +102,28 @@ class SpotifyBotGUI:
         posizioni_scelte_text.pack(padx=5, pady=5, fill='both', expand=True)
         posizioni_scelte_text.bind('<KeyRelease>', lambda e: self.posizioni_scelte_var.set(posizioni_scelte_text.get("1.0", tk.END).strip()))
         
+        # Dopo le altre impostazioni, aggiungi un nuovo frame per min/max posizioni e ripetizioni
+        range_frame = ttk.LabelFrame(self.master, text="Listening Positions and Repetitions Range")
+        range_frame.pack(padx=10, pady=10, fill='x')
+
+        # Min/Max Posizioni
+        posizioni_frame = ttk.Frame(range_frame)
+        posizioni_frame.pack(fill='x', pady=5)
+        ttk.Label(posizioni_frame, text="Positions Range:").pack(side='left')
+        ttk.Label(posizioni_frame, text="Min:").pack(side='left', padx=(10,0))
+        ttk.Entry(posizioni_frame, textvariable=self.min_posizioni_var, width=5).pack(side='left', padx=5)
+        ttk.Label(posizioni_frame, text="Max:").pack(side='left')
+        ttk.Entry(posizioni_frame, textvariable=self.max_posizioni_var, width=5).pack(side='left', padx=5)
+
+        # Min/Max Ripetizioni
+        ripetizioni_frame = ttk.Frame(range_frame)
+        ripetizioni_frame.pack(fill='x', pady=5)
+        ttk.Label(ripetizioni_frame, text="Repetitions Range:").pack(side='left')
+        ttk.Label(ripetizioni_frame, text="Min:").pack(side='left', padx=(10,0))
+        ttk.Entry(ripetizioni_frame, textvariable=self.min_ripetizioni_var, width=5).pack(side='left', padx=5)
+        ttk.Label(ripetizioni_frame, text="Max:").pack(side='left')
+        ttk.Entry(ripetizioni_frame, textvariable=self.max_ripetizioni_var, width=5).pack(side='left', padx=5)
+
         # Buttons
         button_frame = ttk.Frame(self.master)
         button_frame.pack(pady=10)
@@ -130,14 +159,16 @@ class SpotifyBotGUI:
             'playlist_ascolto': random.choice(self.playlist_scelte_var.get().split('\n')),
             
             'posizioni_ascolto': random.sample(self.posizioni_scelte_var.get().split('\n'), 
-                                               k=random.randint(1, len(self.posizioni_scelte_var.get().split('\n')))),
+                                           k=random.randint(self.min_posizioni_var.get(), 
+                                                            self.max_posizioni_var.get())),
             'ripetizioni_per_posizione': {
-                posizione: random.randint(1, 1) 
+                posizione: random.randint(self.min_ripetizioni_var.get(), 
+                                        self.max_ripetizioni_var.get()) 
                 for posizione in random.sample(self.posizioni_scelte_var.get().split('\n'), 
-                                               k=random.randint(1, len(self.posizioni_scelte_var.get().split('\n'))))
+                                            k=random.randint(self.min_posizioni_var.get(), 
+                                                                self.max_posizioni_var.get()))
             },
         }
-        
         # Start Bot in a Separate Thread
         self.stop_event.clear()
         self.bot_thread = threading.Thread(target=self.run_bot, args=(configurazione_bot,))
@@ -194,6 +225,8 @@ class SpotifyBotGUI:
         sys.stderr = sys.__stderr__
 
 def main():
+    if sys.platform.startswith('win'):
+        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
     root = tk.Tk()
     app = SpotifyBotGUI(root)
     root.mainloop()

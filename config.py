@@ -20,11 +20,13 @@ PLAYLIST_SCELTA = [
     'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R',   # New Generation
     'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV'  # Pop-Punk
 ]
-POSIZIONI_SCELTE = ['1','4']
+POSIZIONI_SCELTE = ['1','4','7']
 MIN_POSIZIONI = 1
-MAX_POSIZIONI = 1
+MAX_POSIZIONI = 3
 MIN_RIPETIZIONI = 1
-MAX_RIPETIZIONI = 1
+MAX_RIPETIZIONI = 3
+
+MAX_POSIZIONI = min(MAX_POSIZIONI, len(POSIZIONI_SCELTE))
 
 # SCELTA DELLE PLAYLIST
 PLAYLIST_URLS = [
