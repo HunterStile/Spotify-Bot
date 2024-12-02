@@ -180,7 +180,16 @@ class SpotifyBotGUI:
 
 def main():
     if sys.platform.startswith('win'):
-        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+        kernel32 = ctypes.windll.kernel32
+        user32 = ctypes.windll.user32
+        
+        # Get the console window
+        console_window = kernel32.GetConsoleWindow()
+        
+        # Completely hide the console window
+        user32.ShowWindow(console_window, 0)  # SW_HIDE
+        kernel32.CloseHandle(console_window)
+        
     root = tk.Tk()
     app = SpotifyBotGUI(root)
     root.mainloop()
