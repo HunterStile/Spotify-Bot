@@ -106,8 +106,8 @@ class SpotifyBotGUI:
         configurazione_bot = {
             'crea_account': self.crea_account_var.get(),
             'max_iterazioni': self.max_iterazioni_var.get(),
-            'input_utente': False,
-            'ripetizione': True,
+            'input_utente': INPUT_UTENTE,
+            'ripetizione': RIPETIZIONE,
             
             'usa_proxy': self.proxy_var.get(),
             'proxy_list': self.proxy_list_var.get().split('\n'),
