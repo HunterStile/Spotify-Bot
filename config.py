@@ -46,12 +46,16 @@ PLAYLIST_URLS = [
 MODALITA_POSIZIONI = 'random'  # Valori possibili: 'random' o 'statico'
 
 
+#Altri
+RIPETIZIONE = True
+INPUT_UTENTE = False
+
 configurazione_bot = {
     # Impostazioni generali
     'crea_account': CREAZIONE,
     'max_iterazioni': MAX_ITERAZIONE,
-    'input_utente': False,
-    'ripetizione': True,
+    'input_utente': INPUT_UTENTE,
+    'ripetizione': RIPETIZIONE,
 
     # Configurazione Proxy
     'usa_proxy': PROXY,  # Abilita/disabilita l'uso dei proxy
