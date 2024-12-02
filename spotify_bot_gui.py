@@ -115,6 +115,8 @@ class SpotifyBotGUI:
             
             'segui_playlist': self.segui_playlist_var.get(),
             'playlist_urls': self.playlist_urls_var.get().split('\n'),
+            'playlist_follow': PLAYLIST_FOLLOW,
+
             
             'modalita_posizioni': self.modalita_posizioni_var.get(),
             
