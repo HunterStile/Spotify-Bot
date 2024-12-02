@@ -35,7 +35,9 @@ PLAYLIST_FOLLOW = [
 # Playlist con configurazioni specifiche
 PLAYLIST_URLS = [
     'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC;1,3,5',   # Pop-Punk con posizioni specifiche
+    'https://open.spotify.com/playlist/1qEvrxdkHTJdrtxHlG80Ry',         # Trap Italia (casuale)
     'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R;2,4,6',   # New Generation con posizioni
+    'https://open.spotify.com/playlist/2EAacye5AQOZu9WN8Z5k4X',         # Top Music (casuale) 
     'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS;7,9,11'   # Indie Italia con posizioni
 ]
 
