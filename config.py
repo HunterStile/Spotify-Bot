@@ -9,6 +9,8 @@ DOPPIOPROXY = False
 SEGUI_PLAYLIST = True
 #scegliere se ablitare la routine di ascoltare canzoni
 ASCOLTA_CANZONI = True
+
+MAX_ITERAZIONE = 100
 #scegliere i profili proxy da ruotare.
 PROXYLIST = [
     'profilo1.ppx',
@@ -41,13 +43,13 @@ PLAYLIST_URLS = [
     'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS;7,9,11'   # Indie Italia con posizioni
 ]
 
-MODALITA_POSIZIONI = 'statico'  # Valori possibili: 'random' o 'statico'
+MODALITA_POSIZIONI = 'random'  # Valori possibili: 'random' o 'statico'
 
 
 configurazione_bot = {
     # Impostazioni generali
     'crea_account': CREAZIONE,
-    'max_iterazioni': 100,
+    'max_iterazioni': MAX_ITERAZIONE,
     'input_utente': False,
     'ripetizione': True,
 

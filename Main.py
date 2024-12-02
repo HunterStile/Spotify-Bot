@@ -11,14 +11,11 @@ def parse_playlist_config(playlist_urls):
     """
     playlist_config = {}
     for url in playlist_urls:
-        print(f"Processing URL: {url}")  # Debug print
         parts = url.split(';')
         playlist_url = parts[0]
         
         if len(parts) > 1:
             positions = [str(p.strip()) for p in parts[1].split(',')]
-            print(f"Extracted URL: {playlist_url}")  # Debug print
-            print(f"Extracted Positions: {positions}")  # Debug print
             playlist_config[playlist_url] = positions
     
     return playlist_config
@@ -31,7 +28,6 @@ def esegui_bot_spotify(config):
 
      # Parse playlist configurations
     playlist_posizioni_fisse = parse_playlist_config(config.get('playlist_urls', []))
-    print("Playlist Config:", playlist_posizioni_fisse)
 
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
         count += 1  # Increment iteration count
@@ -136,12 +132,9 @@ def esegui_bot_spotify(config):
                         Sento_canzone(driver, posizione)
                 
                 elif modalita_posizioni == 'statico':
-                    print(f"Playlist URL: {playlist_ascolto}")
-                    print(f"Playlist config keys: {list(playlist_posizioni_fisse.keys())}")
                     # Controlla se ci sono posizioni specificate per questa playlist
                     if playlist_url_clean in playlist_posizioni_fisse:
                         posizioni = playlist_posizioni_fisse[playlist_url_clean]
-                        print(f"Posizioni trovate: {posizioni}")
                         
                         # Ascolta le posizioni specificate
                         for posizione in posizioni:

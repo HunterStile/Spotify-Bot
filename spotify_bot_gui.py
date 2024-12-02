@@ -19,7 +19,7 @@ class SpotifyBotGUI:
     def __init__(self, master):
         self.master = master
         master.title("Spotify Bot Control Panel")
-        master.geometry("600x700")
+        master.geometry("600x800")
         
         # Bot Configuration Variables
         self.crea_account_var = tk.BooleanVar(value=config_module.CREAZIONE)
@@ -27,7 +27,7 @@ class SpotifyBotGUI:
         self.segui_playlist_var = tk.BooleanVar(value=config_module.SEGUI_PLAYLIST)
         self.ascolta_canzoni_var = tk.BooleanVar(value=config_module.ASCOLTA_CANZONI)
         
-        self.max_iterazioni_var = tk.IntVar(value=50)
+        self.max_iterazioni_var = tk.IntVar(value=config_module.MAX_ITERAZIONE)
         self.modalita_posizioni_var = tk.StringVar(value=config_module.MODALITA_POSIZIONI)
         
         # Proxy List
@@ -107,7 +107,7 @@ class SpotifyBotGUI:
             'crea_account': self.crea_account_var.get(),
             'max_iterazioni': self.max_iterazioni_var.get(),
             'input_utente': False,
-            'ripetizione': False,
+            'ripetizione': True,
             
             'usa_proxy': self.proxy_var.get(),
             'proxy_list': self.proxy_list_var.get().split('\n'),
