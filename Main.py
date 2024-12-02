@@ -2,13 +2,36 @@ import random
 from time import sleep
 from funzioni.spotify_functions import *
 from config import *
+import re
+
+def parse_playlist_config(playlist_urls):
+    """
+    Parse playlist URLs to extract optional position configurations
+    Format: playlist_url;1,3,5 or just playlist_url
+    """
+    playlist_config = {}
+    for url in playlist_urls:
+        parts = url.split(';')
+        playlist_url = parts[0]
+        
+        if len(parts) > 1:
+            positions = [str(p.strip()) for p in parts[1].split(',')]
+            playlist_config[playlist_url] = positions
+    
+    return playlist_config
 
 def esegui_bot_spotify(config):
     count_creazione = 0
     count_accesso = 0
     ripetizione = True
+    count = 0  # Initialize count for tracking iterations
+
+     # Parse playlist configurations
+    playlist_posizioni_fisse = parse_playlist_config(config.get('playlist_urls', []))
 
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
+        count += 1  # Increment iteration count
+
         if config.get('crea_account', False):
             count_creazione += 1
             print(f"{count_creazione}° Creazione")
@@ -22,16 +45,15 @@ def esegui_bot_spotify(config):
         try:
             # Gestione Proxy (opzionale)
             if config.get('usa_proxy', False):
-                proxy_list = config.get('proxy_list', [])
+                proxy_list = config.get('proxy_list_first', [])
                 if proxy_list:
                     config_file_name = random.choice(proxy_list)
-                    changhe_proxy(config_file_name)
-                    print(f"Proxy configurato: {config_file_name}")
+                    change_proxy(config_file_name)
                     
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
-                credenziali = crea_account(driver)
+                credenziali = crea_account(driver, DOPPIOPROXY)
                 email = credenziali[0]
                 password = credenziali[1]
                 driver = credenziali[2]
@@ -80,28 +102,47 @@ def esegui_bot_spotify(config):
                         # Aggiungi l'account usato in fondo
                         csvwriter.writerow(row)
             
-            # Seguire playlist dinamicamente
+             # Seguire playlist dinamicamente
             if config.get('segui_playlist', False):
-                playlist_da_seguire = config.get('playlist_urls', [])
+                playlist_da_seguire = config.get('playlist_follow', [])
                 for playlist in playlist_da_seguire:
                     seguo_playlist(driver, playlist)
             
-            # Ascoltare canzoni con configurazione avanzata
+             # Ascoltare canzoni con configurazione avanzata
             if config.get('ascolta_canzoni', False):
-                # Playlist per l'ascolto
-                playlist_ascolto = config.get('playlist_ascolto', '')
-                scegli_playlist(driver, playlist_ascolto)
+                # Modalità di selezione delle posizioni
+                modalita_posizioni = config.get('modalita_posizioni', 'random')
                 
-                # Configurazione ascolto canzone
-                posizioni = config.get('posizioni_ascolto', [])
-                ripetizioni_per_posizione = config.get('ripetizioni_per_posizione', {})
+                # Scegli una playlist
+                playlist_ascolto = random.choice(config.get('playlist_urls', []))
                 
-                for posizione in posizioni:
-                    # Numero di ripetizioni per questa posizione
-                    volte_ripetizione = ripetizioni_per_posizione.get(posizione, 1)
+                # Estrai URL pulito
+                playlist_url_clean = playlist_ascolto.split(';')[0]
+      
+                scegli_playlist(driver, playlist_url_clean)
+                
+                # Gestisci la selezione delle posizioni
+                if modalita_posizioni == 'random':
+                    # Genera una posizione casuale tra 1 e 20
+                    posizione = str(random.randint(1, 20))
+                    volte_ripetizione = random.randint(1, 1)
                     
+                    # Ascolta la canzone
                     for _ in range(volte_ripetizione):
-                        Sento_canzone(driver, str(posizione))
+                        Sento_canzone(driver, posizione)
+                
+                elif modalita_posizioni == 'statico':
+                    # Controlla se ci sono posizioni specificate per questa playlist
+                    if playlist_url_clean in playlist_posizioni_fisse:
+                        posizioni = playlist_posizioni_fisse[playlist_url_clean]
+                        
+                        # Ascolta le posizioni specificate
+                        for posizione in posizioni:
+                            volte_ripetizione = random.randint(1, 1)
+                            for _ in range(volte_ripetizione):
+                                Sento_canzone(driver, posizione)
+                    else:
+                        print(f"Playlist non trovata nella configurazione: {playlist_ascolto}")
             
             # Input utente per continuare (opzionale)
             if config.get('input_utente', False):
