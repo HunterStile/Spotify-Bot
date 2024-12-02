@@ -27,27 +27,14 @@ class SpotifyBotGUI:
         self.segui_playlist_var = tk.BooleanVar(value=config_module.SEGUI_PLAYLIST)
         self.ascolta_canzoni_var = tk.BooleanVar(value=config_module.ASCOLTA_CANZONI)
         
-        self.max_iterazioni_var = tk.IntVar(value=100)
+        self.max_iterazioni_var = tk.IntVar(value=50)
+        self.modalita_posizioni_var = tk.StringVar(value=config_module.MODALITA_POSIZIONI)
         
         # Proxy List
         self.proxy_list_var = tk.StringVar(value='\n'.join(config_module.PROXYLIST))
         
         # Playlist URLs
         self.playlist_urls_var = tk.StringVar(value='\n'.join(config_module.PLAYLIST_URLS))
-        
-        # Playlist Scelte
-        self.playlist_scelte_var = tk.StringVar(value='\n'.join(config_module.PLAYLIST_SCELTA))
-        
-        # Posizioni Scelte
-        self.posizioni_scelte_var = tk.StringVar(value='\n'.join(config_module.POSIZIONI_SCELTE))
-
-        # Aggiungi questi nuovi attributi nella __init__
-        self.min_posizioni_var = tk.IntVar(value=config_module.MIN_POSIZIONI)
-        self.max_posizioni_var = tk.IntVar(value=config_module.MAX_POSIZIONI)
-        self.min_ripetizioni_var = tk.IntVar(value=config_module.MIN_RIPETIZIONI)
-        self.max_ripetizioni_var = tk.IntVar(value=config_module.MAX_RIPETIZIONI)
-
-        self.modalita_posizioni_var = tk.StringVar(value=config_module.MODALITA_POSIZIONI)
         
         # Bot Thread
         self.bot_thread = None
@@ -72,6 +59,16 @@ class SpotifyBotGUI:
         ttk.Label(max_iter_frame, text="Max Iterations:").pack(side='left')
         ttk.Entry(max_iter_frame, textvariable=self.max_iterazioni_var, width=10).pack(side='left', padx=5)
         
+        # Modalità Posizioni
+        modalita_frame = ttk.LabelFrame(self.master, text="Position Selection Mode")
+        modalita_frame.pack(padx=10, pady=10, fill='x')
+        
+        random_radio = ttk.Radiobutton(modalita_frame, text="Random", variable=self.modalita_posizioni_var, value='random')
+        random_radio.pack(side='left', padx=10)
+        
+        statico_radio = ttk.Radiobutton(modalita_frame, text="Static", variable=self.modalita_posizioni_var, value='statico')
+        statico_radio.pack(side='left', padx=10)
+        
         # Proxy List
         proxy_frame = ttk.LabelFrame(self.master, text="Proxy List (one per line)")
         proxy_frame.pack(padx=10, pady=10, fill='both', expand=True)
@@ -81,61 +78,13 @@ class SpotifyBotGUI:
         proxy_text.bind('<KeyRelease>', lambda e: self.proxy_list_var.set(proxy_text.get("1.0", tk.END).strip()))
         
         # Playlist URLs
-        playlist_urls_frame = ttk.LabelFrame(self.master, text="Playlist URLs to Follow (one per line)")
+        playlist_urls_frame = ttk.LabelFrame(self.master, text="Playlist URLs (format: url:pos1,pos2,pos3)")
         playlist_urls_frame.pack(padx=10, pady=10, fill='both', expand=True)
-        playlist_urls_text = tk.Text(playlist_urls_frame, height=5)
+        playlist_urls_text = tk.Text(playlist_urls_frame, height=10)
         playlist_urls_text.insert(tk.END, self.playlist_urls_var.get())
         playlist_urls_text.pack(padx=5, pady=5, fill='both', expand=True)
         playlist_urls_text.bind('<KeyRelease>', lambda e: self.playlist_urls_var.set(playlist_urls_text.get("1.0", tk.END).strip()))
         
-        # Aggiungi questo dopo gli altri widget di configurazione
-        modalita_frame = ttk.LabelFrame(self.master, text="Position Selection Mode")
-        modalita_frame.pack(padx=10, pady=10, fill='x')
-        
-        random_radio = ttk.Radiobutton(modalita_frame, text="Random", variable=self.modalita_posizioni_var, value='random')
-        random_radio.pack(side='left', padx=10)
-        
-        statico_radio = ttk.Radiobutton(modalita_frame, text="Static", variable=self.modalita_posizioni_var, value='statico')
-        statico_radio.pack(side='left', padx=10)
-
-        # Playlist Scelte
-        playlist_scelte_frame = ttk.LabelFrame(self.master, text="Playlists to Listen (one per line)")
-        playlist_scelte_frame.pack(padx=10, pady=10, fill='both', expand=True)
-        playlist_scelte_text = tk.Text(playlist_scelte_frame, height=5)
-        playlist_scelte_text.insert(tk.END, self.playlist_scelte_var.get())
-        playlist_scelte_text.pack(padx=5, pady=5, fill='both', expand=True)
-        playlist_scelte_text.bind('<KeyRelease>', lambda e: self.playlist_scelte_var.set(playlist_scelte_text.get("1.0", tk.END).strip()))
-        
-        # Posizioni Scelte
-        posizioni_scelte_frame = ttk.LabelFrame(self.master, text="Listening Positions (one per line)")
-        posizioni_scelte_frame.pack(padx=10, pady=10, fill='both', expand=True)
-        posizioni_scelte_text = tk.Text(posizioni_scelte_frame, height=3)
-        posizioni_scelte_text.insert(tk.END, self.posizioni_scelte_var.get())
-        posizioni_scelte_text.pack(padx=5, pady=5, fill='both', expand=True)
-        posizioni_scelte_text.bind('<KeyRelease>', lambda e: self.posizioni_scelte_var.set(posizioni_scelte_text.get("1.0", tk.END).strip()))
-        
-        # Dopo le altre impostazioni, aggiungi un nuovo frame per min/max posizioni e ripetizioni
-        range_frame = ttk.LabelFrame(self.master, text="Listening Positions and Repetitions Range")
-        range_frame.pack(padx=10, pady=10, fill='x')
-
-        # Min/Max Posizioni
-        posizioni_frame = ttk.Frame(range_frame)
-        posizioni_frame.pack(fill='x', pady=5)
-        ttk.Label(posizioni_frame, text="Positions Range:").pack(side='left')
-        ttk.Label(posizioni_frame, text="Min:").pack(side='left', padx=(10,0))
-        ttk.Entry(posizioni_frame, textvariable=self.min_posizioni_var, width=5).pack(side='left', padx=5)
-        ttk.Label(posizioni_frame, text="Max:").pack(side='left')
-        ttk.Entry(posizioni_frame, textvariable=self.max_posizioni_var, width=5).pack(side='left', padx=5)
-
-        # Min/Max Ripetizioni
-        ripetizioni_frame = ttk.Frame(range_frame)
-        ripetizioni_frame.pack(fill='x', pady=5)
-        ttk.Label(ripetizioni_frame, text="Repetitions Range:").pack(side='left')
-        ttk.Label(ripetizioni_frame, text="Min:").pack(side='left', padx=(10,0))
-        ttk.Entry(ripetizioni_frame, textvariable=self.min_ripetizioni_var, width=5).pack(side='left', padx=5)
-        ttk.Label(ripetizioni_frame, text="Max:").pack(side='left')
-        ttk.Entry(ripetizioni_frame, textvariable=self.max_ripetizioni_var, width=5).pack(side='left', padx=5)
-
         # Buttons
         button_frame = ttk.Frame(self.master)
         button_frame.pack(pady=10)
@@ -158,7 +107,7 @@ class SpotifyBotGUI:
             'crea_account': self.crea_account_var.get(),
             'max_iterazioni': self.max_iterazioni_var.get(),
             'input_utente': False,
-            'ripetizione': True,
+            'ripetizione': False,
             
             'usa_proxy': self.proxy_var.get(),
             'proxy_list': self.proxy_list_var.get().split('\n'),
@@ -167,27 +116,11 @@ class SpotifyBotGUI:
             'segui_playlist': self.segui_playlist_var.get(),
             'playlist_urls': self.playlist_urls_var.get().split('\n'),
             
-            'ascolta_canzoni': self.ascolta_canzoni_var.get(),
-
             'modalita_posizioni': self.modalita_posizioni_var.get(),
-            'playlist_posizioni_fisse': {
-                url.split(':')[0]: url.split(':')[1].split(',') 
-                for url in self.playlist_posizioni_fisse_var.get().split('\n')
-                if ':' in url
-            },
-            'playlist_ascolto': random.choice(self.playlist_scelte_var.get().split('\n')),
             
-            'posizioni_ascolto': random.sample(self.posizioni_scelte_var.get().split('\n'), 
-                                           k=random.randint(self.min_posizioni_var.get(), 
-                                                            self.max_posizioni_var.get())),
-            'ripetizioni_per_posizione': {
-                posizione: random.randint(self.min_ripetizioni_var.get(), 
-                                        self.max_ripetizioni_var.get()) 
-                for posizione in random.sample(self.posizioni_scelte_var.get().split('\n'), 
-                                            k=random.randint(self.min_posizioni_var.get(), 
-                                                                self.max_posizioni_var.get()))
-            },
+            'ascolta_canzoni': self.ascolta_canzoni_var.get(),
         }
+        
         # Start Bot in a Separate Thread
         self.stop_event.clear()
         self.bot_thread = threading.Thread(target=self.run_bot, args=(configurazione_bot,))
@@ -197,7 +130,7 @@ class SpotifyBotGUI:
         self.start_button['state'] = 'disabled'
         self.stop_button['state'] = 'normal'
     
-    def run_bot(self, configurazione_bot):  # Aggiungi il parametro configurazione_bot
+    def run_bot(self, configurazione_bot):
         try:
             # Redirect stdout to console text widget
             class TextRedirector:

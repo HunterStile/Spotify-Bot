@@ -2,12 +2,36 @@ import random
 from time import sleep
 from funzioni.spotify_functions import *
 from config import *
+import re
+
+def parse_playlist_config(playlist_urls):
+    """
+    Parse playlist URLs to extract optional position configurations
+    Format: playlist_url;1,3,5 or just playlist_url
+    """
+    playlist_config = {}
+    for url in playlist_urls:
+        print(f"Processing URL: {url}")  # Debug print
+        parts = url.split(';')
+        playlist_url = parts[0]
+        
+        if len(parts) > 1:
+            positions = [str(p.strip()) for p in parts[1].split(',')]
+            print(f"Extracted URL: {playlist_url}")  # Debug print
+            print(f"Extracted Positions: {positions}")  # Debug print
+            playlist_config[playlist_url] = positions
+    
+    return playlist_config
 
 def esegui_bot_spotify(config):
     count_creazione = 0
     count_accesso = 0
     ripetizione = True
     count = 0  # Initialize count for tracking iterations
+
+     # Parse playlist configurations
+    playlist_posizioni_fisse = parse_playlist_config(config.get('playlist_urls', []))
+    print("Playlist Config:", playlist_posizioni_fisse)
 
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
         count += 1  # Increment iteration count
@@ -82,53 +106,50 @@ def esegui_bot_spotify(config):
                         # Aggiungi l'account usato in fondo
                         csvwriter.writerow(row)
             
-            # Seguire playlist dinamicamente
+             # Seguire playlist dinamicamente
             if config.get('segui_playlist', False):
-                playlist_da_seguire = config.get('playlist_urls', [])
+                playlist_da_seguire = config.get('playlist_follow', [])
                 for playlist in playlist_da_seguire:
                     seguo_playlist(driver, playlist)
             
-            # Ascoltare canzoni con configurazione avanzata
+             # Ascoltare canzoni con configurazione avanzata
             if config.get('ascolta_canzoni', False):
-                # Determina la modalità di selezione delle posizioni
+                # Modalità di selezione delle posizioni
                 modalita_posizioni = config.get('modalita_posizioni', 'random')
                 
-                # Playlist per l'ascolto
-                playlist_ascolto = config.get('playlist_ascolto', '')
-                scegli_playlist(driver, playlist_ascolto)
+                # Scegli una playlist
+                playlist_ascolto = random.choice(config.get('playlist_urls', []))
                 
-                # Gestisci diverse modalità di selezione delle posizioni
+                # Estrai URL pulito
+                playlist_url_clean = playlist_ascolto.split(';')[0]
+      
+                scegli_playlist(driver, playlist_url_clean)
+                
+                # Gestisci la selezione delle posizioni
                 if modalita_posizioni == 'random':
-                    # Logica di selezione casuale
-                    posizioni = config.get('posizioni_ascolto', [])
-                    ripetizioni_per_posizione = config.get('ripetizioni_per_posizione', {})
+                    # Genera una posizione casuale tra 1 e 20
+                    posizione = str(random.randint(1, 20))
+                    volte_ripetizione = random.randint(1, 1)
+                    
+                    # Ascolta la canzone
+                    for _ in range(volte_ripetizione):
+                        Sento_canzone(driver, posizione)
                 
                 elif modalita_posizioni == 'statico':
-                    # Logica di selezione statica basata sulle playlist specificate
-                    playlist_posizioni_fisse = config.get('playlist_posizioni_fisse', {})
-                    
-                    # Se la playlist corrente è nelle posizioni fisse, usa quelle
-                    if playlist_ascolto in playlist_posizioni_fisse:
-                        posizioni = playlist_posizioni_fisse[playlist_ascolto]
+                    print(f"Playlist URL: {playlist_ascolto}")
+                    print(f"Playlist config keys: {list(playlist_posizioni_fisse.keys())}")
+                    # Controlla se ci sono posizioni specificate per questa playlist
+                    if playlist_url_clean in playlist_posizioni_fisse:
+                        posizioni = playlist_posizioni_fisse[playlist_url_clean]
+                        print(f"Posizioni trovate: {posizioni}")
                         
-                        # Genera ripetizioni per le posizioni statiche
-                        ripetizioni_per_posizione = {
-                            posizione: random.randint(config.get('MIN_RIPETIZIONI', 1), 
-                                                      config.get('MAX_RIPETIZIONI', 3)) 
-                            for posizione in posizioni
-                        }
+                        # Ascolta le posizioni specificate
+                        for posizione in posizioni:
+                            volte_ripetizione = random.randint(1, 1)
+                            for _ in range(volte_ripetizione):
+                                Sento_canzone(driver, posizione)
                     else:
-                        # Fallback alla modalità random se la playlist non ha posizioni specificate
-                        posizioni = config.get('posizioni_ascolto', [])
-                        ripetizioni_per_posizione = config.get('ripetizioni_per_posizione', {})
-                
-                # Esegui l'ascolto delle canzoni
-                for posizione in posizioni:
-                    # Numero di ripetizioni per questa posizione
-                    volte_ripetizione = ripetizioni_per_posizione.get(posizione, 1)
-                    
-                    for _ in range(volte_ripetizione):
-                        Sento_canzone(driver, str(posizione))
+                        print(f"Playlist non trovata nella configurazione: {playlist_ascolto}")
             
             # Input utente per continuare (opzionale)
             if config.get('input_utente', False):

@@ -14,31 +14,9 @@ PROXYLIST = [
     'profilo1.ppx',
     'profilo2.ppx'
 ]
-#SCELTA DELLA PLAYLIST DOVE ASCOLTARE LE CANZONI
-PLAYLIST_SCELTA = [
-    'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC',
-    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R:1,2,5',   # New Generation with static positions
-    'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV:3,2'  # Pop-Punk with static positions
-]
-
-MODALITA_POSIZIONI = 'statico'  # Valori possibili: 'random' o 'statico'
-
-PLAYLIST_POSIZIONI = {
-    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R': ['1', '2', '5'],
-    'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV': ['3', '2'],
-    # Puoi aggiungere altre playlist con le loro posizioni
-}
-
-POSIZIONI_SCELTE = ['1','4','7']
-MIN_POSIZIONI = 1
-MAX_POSIZIONI = 3
-MIN_RIPETIZIONI = 1
-MAX_RIPETIZIONI = 3
-
-MAX_POSIZIONI = min(MAX_POSIZIONI, len(POSIZIONI_SCELTE))
 
 # SCELTA DELLE PLAYLIST
-PLAYLIST_URLS = [
+PLAYLIST_FOLLOW = [
     'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC',   # Pop-Punk
     'https://open.spotify.com/playlist/1qEvrxdkHTJdrtxHlG80Ry',   # Trap Italia
     'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R',   # New Generation
@@ -51,6 +29,18 @@ PLAYLIST_URLS = [
     'https://open.spotify.com/playlist/1Hgl2BCI250xGtyGFXuJpB',
     'https://open.spotify.com/playlist/3F82VLnmyuQ0ujPQPnxdRy'
 ]
+
+
+#SCELTA DELLA PLAYLIST DOVE ASCOLTARE LE CANZONI
+# Playlist con configurazioni specifiche
+PLAYLIST_URLS = [
+    'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC;1,3,5',   # Pop-Punk con posizioni specifiche
+    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R;2,4,6',   # New Generation con posizioni
+    'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS;7,9,11'   # Indie Italia con posizioni
+]
+
+MODALITA_POSIZIONI = 'statico'  # Valori possibili: 'random' o 'statico'
+
 
 configurazione_bot = {
     # Impostazioni generali
@@ -67,31 +57,11 @@ configurazione_bot = {
     # Configurazione playlist da seguire
     'segui_playlist': SEGUI_PLAYLIST,
     'playlist_urls': PLAYLIST_URLS,
+    'playlist_follow': PLAYLIST_FOLLOW,
     
     # Nuovo flag per la modalità di selezione delle posizioni
     'modalita_posizioni': MODALITA_POSIZIONI,
-    'playlist_posizioni_fisse': PLAYLIST_POSIZIONI,
     
     # Configurazione ascolto canzoni
     'ascolta_canzoni': ASCOLTA_CANZONI,
-    
-    # Mantieni la logica di generazione casuale
-    'posizioni_ascolto': (
-        random.sample(POSIZIONI_SCELTE, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI))
-        if MODALITA_POSIZIONI == 'random' 
-        else list(PLAYLIST_POSIZIONI.values())[0]
-    ),
-    'ripetizioni_per_posizione': (
-        {
-            posizione: random.randint(MIN_RIPETIZIONI, MAX_RIPETIZIONI) 
-            for posizione in (
-                random.sample(POSIZIONI_SCELTE, k=random.randint(MIN_POSIZIONI, MAX_POSIZIONI))
-            )
-        }
-        if MODALITA_POSIZIONI == 'random'
-        else {
-            posizione: random.randint(MIN_RIPETIZIONI, MAX_RIPETIZIONI) 
-            for posizione in list(PLAYLIST_POSIZIONI.values())[0]
-        }
-    ),
 }
