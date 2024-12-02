@@ -61,7 +61,7 @@ def reset_network_connections():
 
 # Funzione per configurare il proxy
 def change_proxy(config_file_name):
-    reset_network_connections()  # Termina connessioni precedenti
+    #reset_network_connections()  # Da capire
 
     proxifier_exe_path = "C:\\Program Files (x86)\\Proxifier\\proxifier.exe"
     config_file_path = f"C:\\Users\\Luigi\\AppData\\Roaming\\Proxifier4\\Profiles\\{config_file_name}"
