@@ -273,7 +273,6 @@ def crea_account(driver,proxy):
             csvwriter = csv.writer(csvfile, delimiter=',')
             for row in new_rows:
                 csvwriter.writerow(row)
-            print('Playlist seguite!')
     else:
         print('Account non creato.., riprovo.')
 
@@ -285,8 +284,8 @@ def seguo_playlist(driver,link):
         driver.get(link)
         sleep(randint(4,5))                     
         driver.find_element(By.XPATH,posizione_seguo_playlist).click()
-        sleep(randint(4,5))
         print("Playlist seguita!")
+        sleep(randint(2,3))
     except Exception as e:
         print(f"Errore durante il clic: {str(e)}")
         sleep(randint(4,5)) 
