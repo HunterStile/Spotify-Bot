@@ -246,11 +246,11 @@ def crea_account(driver,proxy,stop_for_robot):
        driver.find_element(By.XPATH,'//*[@id="encore-web-main-content"]/div/div/div/div/div/button/span[1]').click()
        sleep(randint(4,5))
     robot2 = "Continua" in page_text
-    if stop_for_robot==True:
-        print("Richiesta roboto")
-        return True
-
+    
     while robot2==True:
+       if stop_for_robot==True:
+        print("Richiesta robot")
+        return True
        print("richiesta robot...")
        url = driver.current_url
        #risolvi_captcha(driver,url)
