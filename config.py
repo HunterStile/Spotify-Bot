@@ -5,6 +5,7 @@ CREAZIONE = True
 #scegliere True per usare proxy, False senza.
 PROXY = False
 DOPPIOPROXY = False
+STOP_FOR_ROBOT = True
 #scegliere se abilitare la routine di seguire le playlist
 SEGUI_PLAYLIST = True
 #scegliere se ablitare la routine di ascoltare canzoni

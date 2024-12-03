@@ -122,6 +122,8 @@ class SpotifyBotGUI:
             
             'ascolta_canzoni': self.ascolta_canzoni_var.get(),
         }
+        # Passa l'evento di stop al bot
+        configurazione_bot['stop_event'] = self.stop_event
         
         # Start Bot in a Separate Thread
         self.stop_event.clear()
