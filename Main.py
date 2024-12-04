@@ -166,8 +166,10 @@ def esegui_bot_spotify(config):
     print("Tutte le riproduzioni sono state eseguite!")
 
 def attendi_con_messaggio(secondi):
+    intervallo_messaggio = 600  # 10 minuti in secondi
     for i in range(secondi, 0, -1):
-        print(f"Aspettando... {i} secondi rimasti", end='\r')
+        if i % intervallo_messaggio == 0 or i == secondi:  # Stampa ogni 10 minuti o all'inizio
+            print(f"Aspettando... {i} secondi rimasti")
         sleep(1)
     print("\nRiprendo il bot...")
 
