@@ -51,7 +51,7 @@ def esegui_bot_spotify(config):
             
             # Configurazione browser
             driver = configurazione_browser()
-            
+
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
@@ -67,7 +67,7 @@ def esegui_bot_spotify(config):
                         if TIPO_ROUTER == 'tim':
                             reset_router_tim(driver)
                             driver.close()
-                        elif TIPO_ROUTER == 'vodaone':
+                        elif TIPO_ROUTER == 'vodafone':
                             reset_router_vodafone(driver)
                             driver.close()
                         else:
