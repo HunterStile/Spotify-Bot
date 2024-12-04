@@ -53,10 +53,14 @@ def esegui_bot_spotify(config):
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
-                credenziali = crea_account(driver, DOPPIOPROXY)
-                email = credenziali[0]
-                password = credenziali[1]
-                driver = credenziali[2]
+                credenziali = crea_account(driver, DOPPIOPROXY,STOP_FOR_ROBOT)
+                if isinstance(credenziali,tuple):
+                    email = credenziali[0]
+                    password = credenziali[1]
+                    driver = credenziali[2]
+                else:
+                    print("Bot rilevato,attendi un attimo...")
+                    attendi_con_messaggio(3600)  # Aspetta 1 ora
             else:
                 # Carica account da CSV
                 with open(file, newline='', encoding='utf-8') as csvfile:
@@ -160,6 +164,14 @@ def esegui_bot_spotify(config):
             driver.close()
     
     print("Tutte le riproduzioni sono state eseguite!")
+
+def attendi_con_messaggio(secondi):
+    intervallo_messaggio = 600  # 10 minuti in secondi
+    for i in range(secondi, 0, -1):
+        if i % intervallo_messaggio == 0 or i == secondi:  # Stampa ogni 10 minuti o all'inizio
+            print(f"Aspettando... {i} secondi rimasti")
+        sleep(1)
+    print("\nRiprendo il bot...")
 
 # Chiamata principale
 if __name__ == "__main__":

@@ -145,7 +145,7 @@ def leggi_txt(nome_file):
 # FUNZIONI SPOTIFY #
 
 #Crea un account spotify
-def crea_account(driver,proxy):
+def crea_account(driver,proxy,stop_for_robot):
     #variabili - logiche
     robot2 = False
     robot = False
@@ -157,7 +157,7 @@ def crea_account(driver,proxy):
     for i in range(1000):
         nome = fake.first_name()
         nomi.append(nome)
-    mesi = ['gennaio','febbraio','marzo','aprile','maggio','giguno','luglio','agosto','settembre','ottobre''novembre''dicembre']
+    mesi = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre''novembre''dicembre']
     nickname = random.choice(nomi)
     anno=randint(1996,2005)
     mese=random.choice(mesi)
@@ -246,7 +246,12 @@ def crea_account(driver,proxy):
        driver.find_element(By.XPATH,'//*[@id="encore-web-main-content"]/div/div/div/div/div/button/span[1]').click()
        sleep(randint(4,5))
     robot2 = "Continua" in page_text
+    
     while robot2==True:
+       if stop_for_robot==True:
+        print("Richiesta robot")
+        driver.close()
+        return True
        print("richiesta robot...")
        url = driver.current_url
        #risolvi_captcha(driver,url)
