@@ -147,9 +147,21 @@ def leggi_txt(nome_file):
         print(f"Errore durante la lettura del file '{nome_file}': {e}")
         return None
     
-def reset_router(driver):
+def reset_router_tim(driver):
     link_accesso = 'http://192.168.1.1/'
     driver.get(link_accesso)
+
+    # Massimizzare la finestra del driver immediatamente
+    driver.maximize_window()
+    
+    page_text = check_conferma(driver)
+    blocco = "privata" in page_text
+    if blocco == True:
+        driver.find_element(By.XPATH,'//*[@id="details-button"]').click()
+        sleep(randint(a,b))
+        driver.find_element(By.XPATH,'//*[@id="proceed-link"]').click()
+        sleep(randint(a,b))
+        
     utente = os.getenv('ROUTER_USER')
     password = os.getenv('ROUTER_PASSWORD')
     sleep(randint(2,3))
@@ -158,7 +170,14 @@ def reset_router(driver):
     driver.find_element(By.XPATH,'//*[@id="Frm_Password"]').send_keys(password)
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="LoginId"]').click()
-    sleep(randint(4,5))
+     # Wait esplicito per il caricamento della pagina dopo il login
+    try:
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="mgrAndDiag"]'))
+        )
+    except TimeoutException:
+        print("Timeout durante il caricamento della pagina dopo il login")
+        return
     driver.find_element(By.XPATH,'//*[@id="mgrAndDiag"]').click()
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="devMgr"]').click()
@@ -166,6 +185,51 @@ def reset_router(driver):
     driver.find_element(By.XPATH,'//*//*[@id="Btn_restart"]').click()
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="confirmOK"]').click()
+    sleep(randint(a,b))
+    
+    print("Router Riavviato")
+    
+def reset_router_vodafone(driver):
+    link_accesso = 'http://192.168.1.1/'
+    driver.get(link_accesso)
+    
+    # Massimizzare la finestra del driver immediatamente
+    driver.maximize_window()
+    
+    page_text = check_conferma(driver)
+    blocco = "privata" in page_text
+    if blocco == True:
+        driver.find_element(By.XPATH,'//*[@id="details-button"]').click()
+        sleep(randint(a,b))
+        driver.find_element(By.XPATH,'//*[@id="proceed-link"]').click()
+        sleep(randint(a,b))
+    
+    utente = os.getenv('ROUTER_USER')
+    password = os.getenv('ROUTER_PASSWORD')
+    
+    sleep(randint(2,3))
+    driver.find_element(By.XPATH,'//*[@id="activation-content-right"]/div[2]/div/input').send_keys(utente)
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="activation-content-right"]/div[3]/div[1]/input').send_keys(password)
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="activation-content-right"]/div[3]/div[2]/input').click()
+    
+    # Wait esplicito per il caricamento della pagina dopo il login
+    try:
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="navigation"]/ul/li[6]/a'))
+        )
+    except TimeoutException:
+        print("Timeout durante il caricamento della pagina dopo il login")
+        return
+    
+    driver.find_element(By.XPATH,'//*[@id="navigation"]/ul/li[6]/a').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="41"]/a').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="restartB"]').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="applyButton"]').click()
     sleep(randint(a,b))
     
     print("Router Riavviato")

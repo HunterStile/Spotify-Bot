@@ -8,6 +8,9 @@ DOPPIOPROXY = False
 #Gestione richiesta robot
 STOP_FOR_ROBOT = True
 TEMPO_RIPARTENZA = 7200
+#Gestione del reset
+RESET_ROUTER = True
+TIPO_ROUTER = 'tim'
 #scegliere se abilitare la routine di seguire le playlist
 SEGUI_PLAYLIST = True
 #scegliere se ablitare la routine di ascoltare canzoni
