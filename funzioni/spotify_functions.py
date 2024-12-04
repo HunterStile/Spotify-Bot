@@ -22,6 +22,7 @@ import sys
 import os
 import subprocess
 import pyautogui
+from dotenv import load_dotenv
 
 # Ottieni il percorso assoluto della directory corrente (dove si trova il file eseguibile)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +48,10 @@ aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
 posizione_brano = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div/div[1]'
 posizione_seguo_playlist = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[2]/div[2]/div/div/button[1]'
                     
+
+# Carica le variabili d'ambiente dal file .env
+load_dotenv()
+
 
 # FUNZIONI BASE #
 
@@ -141,6 +146,93 @@ def leggi_txt(nome_file):
     except Exception as e:
         print(f"Errore durante la lettura del file '{nome_file}': {e}")
         return None
+    
+def reset_router_tim(driver):
+    link_accesso = 'http://192.168.1.1/'
+    driver.get(link_accesso)
+
+    # Massimizzare la finestra del driver immediatamente
+    driver.maximize_window()
+    
+    page_text = check_conferma(driver)
+    blocco = "privata" in page_text
+    if blocco == True:
+        driver.find_element(By.XPATH,'//*[@id="details-button"]').click()
+        sleep(randint(a,b))
+        driver.find_element(By.XPATH,'//*[@id="proceed-link"]').click()
+        sleep(randint(a,b))
+        
+    utente = os.getenv('ROUTER_USER')
+    password = os.getenv('ROUTER_PASSWORD')
+    sleep(randint(2,3))
+    driver.find_element(By.XPATH,'//*[@id="Frm_Username"]').send_keys(utente)
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="Frm_Password"]').send_keys(password)
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="LoginId"]').click()
+     # Wait esplicito per il caricamento della pagina dopo il login
+    try:
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="mgrAndDiag"]'))
+        )
+    except TimeoutException:
+        print("Timeout durante il caricamento della pagina dopo il login")
+        return
+    driver.find_element(By.XPATH,'//*[@id="mgrAndDiag"]').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="devMgr"]').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*//*[@id="Btn_restart"]').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="confirmOK"]').click()
+    sleep(randint(a,b))
+    
+    print("Router Riavviato")
+    
+def reset_router_vodafone(driver):
+    link_accesso = 'http://192.168.1.1/'
+    driver.get(link_accesso)
+    
+    # Massimizzare la finestra del driver immediatamente
+    driver.maximize_window()
+    
+    page_text = check_conferma(driver)
+    blocco = "privata" in page_text
+    if blocco == True:
+        driver.find_element(By.XPATH,'//*[@id="details-button"]').click()
+        sleep(randint(a,b))
+        driver.find_element(By.XPATH,'//*[@id="proceed-link"]').click()
+        sleep(randint(a,b))
+    
+    utente = os.getenv('ROUTER_USER')
+    password = os.getenv('ROUTER_PASSWORD')
+    
+    sleep(randint(2,3))
+    driver.find_element(By.XPATH,'//*[@id="activation-content-right"]/div[2]/div/input').send_keys(utente)
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="activation-content-right"]/div[3]/div[1]/input').send_keys(password)
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="activation-content-right"]/div[3]/div[2]/input').click()
+    
+    # Wait esplicito per il caricamento della pagina dopo il login
+    try:
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="navigation"]/ul/li[6]/a'))
+        )
+    except TimeoutException:
+        print("Timeout durante il caricamento della pagina dopo il login")
+        return
+    
+    driver.find_element(By.XPATH,'//*[@id="navigation"]/ul/li[6]/a').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="41"]/a').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="restartB"]').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="applyButton"]').click()
+    sleep(randint(a,b))
+    
+    print("Router Riavviato")
     
 # FUNZIONI SPOTIFY #
 
@@ -250,7 +342,6 @@ def crea_account(driver,proxy,stop_for_robot):
     while robot2==True:
        if stop_for_robot==True:
         print("Richiesta robot")
-        driver.close()
         return True
        print("richiesta robot...")
        url = driver.current_url

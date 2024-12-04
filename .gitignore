@@ -3,5 +3,5 @@
 __pycache__/
 # File account spotify creati dal bot
 account_spotify_creati.csv
-
-
+#ignoro le variabili d'ambiente
+.env

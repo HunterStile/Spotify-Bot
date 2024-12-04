@@ -39,8 +39,7 @@ def esegui_bot_spotify(config):
             count_accesso += 1
             print(f"{count_accesso}° Accesso")
         
-        # Configurazione browser
-        driver = configurazione_browser()
+        
         
         try:
             # Gestione Proxy (opzionale)
@@ -49,7 +48,10 @@ def esegui_bot_spotify(config):
                 if proxy_list:
                     config_file_name = random.choice(proxy_list)
                     change_proxy(config_file_name)
-                    
+            
+            # Configurazione browser
+            driver = configurazione_browser()
+
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
@@ -60,7 +62,20 @@ def esegui_bot_spotify(config):
                     driver = credenziali[2]
                 else:
                     print("Bot rilevato,attendi un attimo...")
-                    attendi_con_messaggio(3600)  # Aspetta 1 ora
+
+                    if RESET_ROUTER == True:
+                        if TIPO_ROUTER == 'tim':
+                            reset_router_tim(driver)
+                            driver.close()
+                        elif TIPO_ROUTER == 'vodafone':
+                            reset_router_vodafone(driver)
+                            driver.close()
+                        else:
+                            print("Non posso cambiare il tipo di router scelto..")
+                            driver.close()
+
+                    attendi_con_messaggio(TEMPO_RIPARTENZA)
+                    continue
             else:
                 # Carica account da CSV
                 with open(file, newline='', encoding='utf-8') as csvfile:
@@ -161,7 +176,8 @@ def esegui_bot_spotify(config):
         
         finally:
             # Chiudi sempre il driver
-            driver.close()
+            if isinstance(credenziali,tuple):
+                driver.close()
     
     print("Tutte le riproduzioni sono state eseguite!")
 
