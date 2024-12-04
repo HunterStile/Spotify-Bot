@@ -250,7 +250,6 @@ def crea_account(driver,proxy,stop_for_robot):
     while robot2==True:
        if stop_for_robot==True:
         print("Richiesta robot")
-        driver.close()
         return True
        print("richiesta robot...")
        url = driver.current_url

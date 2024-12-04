@@ -60,7 +60,9 @@ def esegui_bot_spotify(config):
                     driver = credenziali[2]
                 else:
                     print("Bot rilevato,attendi un attimo...")
-                    attendi_con_messaggio(3600)  # Aspetta 1 ora
+                    driver.close()
+                    attendi_con_messaggio(7200)  # Aspetta 2 ore
+                    continue
             else:
                 # Carica account da CSV
                 with open(file, newline='', encoding='utf-8') as csvfile:
@@ -161,7 +163,8 @@ def esegui_bot_spotify(config):
         
         finally:
             # Chiudi sempre il driver
-            driver.close()
+            if isinstance(credenziali,tuple):
+                driver.close()
     
     print("Tutte le riproduzioni sono state eseguite!")
 
