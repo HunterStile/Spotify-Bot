@@ -60,7 +60,18 @@ def esegui_bot_spotify(config):
                     driver = credenziali[2]
                 else:
                     print("Bot rilevato,attendi un attimo...")
-                    driver.close()
+
+                    if RESET_ROUTER == True:
+                        if TIPO_ROUTER == 'tim':
+                            reset_router_tim(driver)
+                            driver.close()
+                        elif TIPO_ROUTER == 'vodaone':
+                            reset_router_vodafone(driver)
+                            driver.close()
+                        else:
+                            print("Non posso cambiare il tipo di router scelto..")
+                            driver.close()
+
                     attendi_con_messaggio(TEMPO_RIPARTENZA)
                     continue
             else:
