@@ -39,8 +39,7 @@ def esegui_bot_spotify(config):
             count_accesso += 1
             print(f"{count_accesso}° Accesso")
         
-        # Configurazione browser
-        driver = configurazione_browser()
+        
         
         try:
             # Gestione Proxy (opzionale)
@@ -49,7 +48,10 @@ def esegui_bot_spotify(config):
                 if proxy_list:
                     config_file_name = random.choice(proxy_list)
                     change_proxy(config_file_name)
-                    
+            
+            # Configurazione browser
+            driver = configurazione_browser()
+            
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
