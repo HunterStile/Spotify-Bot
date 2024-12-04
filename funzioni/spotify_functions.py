@@ -22,6 +22,7 @@ import sys
 import os
 import subprocess
 import pyautogui
+from dotenv import load_dotenv
 
 # Ottieni il percorso assoluto della directory corrente (dove si trova il file eseguibile)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +48,10 @@ aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
 posizione_brano = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div/div[1]'
 posizione_seguo_playlist = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[2]/div[2]/div/div/button[1]'
                     
+
+# Carica le variabili d'ambiente dal file .env
+load_dotenv()
+
 
 # FUNZIONI BASE #
 
@@ -141,6 +146,29 @@ def leggi_txt(nome_file):
     except Exception as e:
         print(f"Errore durante la lettura del file '{nome_file}': {e}")
         return None
+    
+def reset_router(driver):
+    link_accesso = 'http://192.168.1.1/'
+    driver.get(link_accesso)
+    utente = os.getenv('ROUTER_USER')
+    password = os.getenv('ROUTER_PASSWORD')
+    sleep(randint(2,3))
+    driver.find_element(By.XPATH,'//*[@id="Frm_Username"]').send_keys(utente)
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="Frm_Password"]').send_keys(password)
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="LoginId"]').click()
+    sleep(randint(4,5))
+    driver.find_element(By.XPATH,'//*[@id="mgrAndDiag"]').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="devMgr"]').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*//*[@id="Btn_restart"]').click()
+    sleep(randint(a,b))
+    driver.find_element(By.XPATH,'//*[@id="confirmOK"]').click()
+    sleep(randint(a,b))
+    
+    print("Router Riavviato")
     
 # FUNZIONI SPOTIFY #
 
