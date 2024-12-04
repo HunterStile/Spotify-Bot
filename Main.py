@@ -61,7 +61,7 @@ def esegui_bot_spotify(config):
                 else:
                     print("Bot rilevato,attendi un attimo...")
                     driver.close()
-                    attendi_con_messaggio(7200)  # Aspetta 2 ore
+                    attendi_con_messaggio(TEMPO_RIPARTENZA)
                     continue
             else:
                 # Carica account da CSV
