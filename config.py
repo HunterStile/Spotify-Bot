@@ -9,7 +9,7 @@ DOPPIOPROXY = False
 STOP_FOR_ROBOT = True
 TEMPO_RIPARTENZA = 7200
 #Gestione del reset
-RESET_ROUTER = True
+RESET_ROUTER = False
 TIPO_ROUTER = 'vodafone'
 #scegliere se abilitare la routine di seguire le playlist
 SEGUI_PLAYLIST = True
@@ -42,11 +42,11 @@ PLAYLIST_FOLLOW = [
 #SCELTA DELLA PLAYLIST DOVE ASCOLTARE LE CANZONI
 # Playlist con configurazioni specifiche
 PLAYLIST_URLS = [
-    'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC;1,3,5',   # Pop-Punk con posizioni specifiche
+    'https://open.spotify.com/playlist/1TmUjkWHXsKgTsIKvJiCJC;1,5',     # Pop-Punk con posizioni specifiche
     'https://open.spotify.com/playlist/1qEvrxdkHTJdrtxHlG80Ry',         # Trap Italia (casuale)
-    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R;2,4,6',   # New Generation con posizioni
+    'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R;1,6',     # New Generation con posizioni
     'https://open.spotify.com/playlist/2EAacye5AQOZu9WN8Z5k4X',         # Top Music (casuale) 
-    'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS;7,9,11'   # Indie Italia con posizioni
+    'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS;6'        # Indie Italia con posizioni
 ]
 
 MODALITA_POSIZIONI = 'random'  # Valori possibili: 'random' o 'statico'
