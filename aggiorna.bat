@@ -1,4 +1,4 @@
 @echo off
-cd /D "C:\Users\Luigi\Desktop\GITHUB\Spotify-Bot"
+cd /D "C:\Users\PC\Desktop\Spotify-Bot"
 git pull
 pause
