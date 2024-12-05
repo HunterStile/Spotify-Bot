@@ -46,7 +46,7 @@ PLAYLIST_URLS = [
     'https://open.spotify.com/playlist/1qEvrxdkHTJdrtxHlG80Ry',         # Trap Italia (casuale)
     'https://open.spotify.com/playlist/55aJEEvbqcQNF2MRQncP5R;1,6',     # New Generation con posizioni
     'https://open.spotify.com/playlist/2EAacye5AQOZu9WN8Z5k4X',         # Top Music (casuale) 
-    'https://open.spotify.com/playlist/52DGNZbiGch7ewRJOmVuLS;6'        # Indie Italia con posizioni
+    'https://open.spotify.com/playlist/110gM33fjQUsNASKxTG4LV;1'        # New musidc con posizioni
 ]
 
 MODALITA_POSIZIONI = 'random'  # Valori possibili: 'random' o 'statico'
