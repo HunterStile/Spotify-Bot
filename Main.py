@@ -26,8 +26,6 @@ def esegui_bot_spotify(config):
     ripetizione = True
     count = 0  # Initialize count for tracking iterations
 
-     # Parse playlist configurations
-    playlist_posizioni_fisse = parse_playlist_config(config.get('playlist_urls', []))
 
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
         count += 1  # Increment iteration count
@@ -151,9 +149,13 @@ def esegui_bot_spotify(config):
                         Sento_canzone(driver, posizione)
                 
                 elif modalita_posizioni == 'statico':
-                    # Controlla se ci sono posizioni specificate per questa playlist
-                    if playlist_url_clean in playlist_posizioni_fisse:
-                        posizioni = playlist_posizioni_fisse[playlist_url_clean]
+                    # Ottieni tutte le playlist con configurazioni
+                    playlist_posizioni_fisse = parse_playlist_config(config.get('playlist_urls', []))
+                    
+                    # Itera su tutte le playlist con posizioni specificate
+                    for playlist_url_clean, posizioni in playlist_posizioni_fisse.items():
+                        # Scegli la playlist
+                        scegli_playlist(driver, playlist_url_clean)
                         
                         # Ascolta le posizioni specificate
                         for posizione in posizioni:
