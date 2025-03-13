@@ -1,197 +1,102 @@
-import random
-from time import sleep
 from funzioni.spotify_functions import *
-from config import *
-import re
-
-def parse_playlist_config(playlist_urls):
-    """
-    Parse playlist URLs to extract optional position configurations
-    Format: playlist_url;1,3,5 or just playlist_url
-    """
-    playlist_config = {}
-    for url in playlist_urls:
-        parts = url.split(';')
-        playlist_url = parts[0]
-        
-        if len(parts) > 1:
-            positions = [str(p.strip()) for p in parts[1].split(',')]
-            playlist_config[playlist_url] = positions
-    
-    return playlist_config
-
-def esegui_bot_spotify(config):
-    count_creazione = 0
-    count_accesso = 0
-    ripetizione = True
-    count = 0  # Initialize count for tracking iterations
+import random
+import time
+import threading
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium_stealth import stealth
+from config import PROXYLIST, TARGET_SITES, MAX_BOTS, MIN_TIME, MAX_TIME, ENABLE_SCROLL, ENABLE_CLICKS
+from utils import change_proxy, get_random_user_agent
 
 
-    while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
-        count += 1  # Increment iteration count
+# Funzione comportamento umano
+def simulate_user_behavior(driver, stay_time):
+    start_time = time.time()
+    scroll_height = driver.execute_script("return document.body.scrollHeight")
+    last_scroll = 0
 
-        if config.get('crea_account', False):
-            count_creazione += 1
-            print(f"{count_creazione}° Creazione")
-        else:
-            count_accesso += 1
-            print(f"{count_accesso}° Accesso")
-        
-        
-        
+    while (time.time() - start_time) < stay_time:
+        action = random.choice(['scroll', 'move_mouse', 'click', 'idle'])
+
+        if action == 'scroll' and ENABLE_SCROLL:
+            scroll_to = random.randint(last_scroll, scroll_height)
+            driver.execute_script(f"window.scrollTo(0, {scroll_to});")
+            print(f"[INFO] Scrolled to {scroll_to}px")
+            last_scroll = scroll_to
+            time.sleep(random.uniform(2, 5))
+
+        elif action == 'move_mouse':
+            x, y = random.randint(0, 800), random.randint(0, 600)
+            driver.execute_script(f"document.elementFromPoint({x}, {y}).scrollIntoView(true);")
+            print(f"[INFO] Moved mouse to ({x}, {y})")
+            time.sleep(random.uniform(1, 3))
+
+        elif action == 'click' and ENABLE_CLICKS:
+            links = driver.find_elements(By.TAG_NAME, 'a')
+            if links:
+                link = random.choice(links)
+                try:
+                    link.click()
+                    print(f"[INFO] Clicked on a link.")
+                    time.sleep(random.uniform(3, 7))
+                except:
+                    print("[INFO] Failed to click a link.")
+
+        elif action == 'idle':
+            print("[INFO] Idle...")
+            time.sleep(random.uniform(2, 4))
+
+
+# Funzione principale per un bot singolo
+def start_bot(proxy_profile):
+    try:
+        print(f"[BOT] Starting bot with proxy profile: {proxy_profile}")
+
+        # Cambia proxy con Proxifier
+        change_proxy(proxy_profile)
+
+        # Configura User-Agent
+        user_agent = get_random_user_agent()
+
+        # Configura Chrome con stealth + user agent
+        driver = configurazione_browser(user_agent)
+
+        # Scegli sito random
+        site = random.choice(TARGET_SITES)
+        print(f"[BOT] Visiting site: {site}")
+        driver.get(site)
+
+        # Resta sul sito e simula comportamento
+        stay_time = random.randint(MIN_TIME, MAX_TIME)
+        print(f"[BOT] Staying on site for {stay_time} seconds")
+        simulate_user_behavior(driver, stay_time)
+
+        print("[BOT] Done. Closing browser.")
+        driver.quit()
+
+    except Exception as e:
+        print(f"[ERROR] Bot failed: {e}")
         try:
-            # Gestione Proxy (opzionale)
-            if config.get('usa_proxy', False):
-                proxy_list = config.get('proxy_list_first', [])
-                if proxy_list:
-                    config_file_name = random.choice(proxy_list)
-                    change_proxy(config_file_name)
-            
-            # Configurazione browser
-            driver = configurazione_browser()
+            driver.quit()
+        except:
+            pass
 
-            # Creazione/Accesso account
-            if config.get('crea_account', False):
-                # Crea nuovo account
-                credenziali = crea_account(driver, DOPPIOPROXY,STOP_FOR_ROBOT)
-                if isinstance(credenziali,tuple):
-                    email = credenziali[0]
-                    password = credenziali[1]
-                    driver = credenziali[2]
-                else:
-                    print("Bot rilevato,attendi un attimo...")
 
-                    if RESET_ROUTER == True:
-                        if TIPO_ROUTER == 'tim':
-                            reset_router_tim(driver)
-                            driver.close()
-                        elif TIPO_ROUTER == 'vodafone':
-                            reset_router_vodafone(driver)
-                            driver.close()
-                        else:
-                            print("Non posso cambiare il tipo di router scelto..")
-                            driver.close()
+# Funzione per gestire i bot multipli
+def start_bots():
+    threads = []
+    for i in range(MAX_BOTS if MAX_BOTS > 0 else 1):
+        proxy_profile = random.choice(PROXYLIST)
+        t = threading.Thread(target=start_bot, args=(proxy_profile,))
+        t.start()
+        threads.append(t)
+        time.sleep(random.uniform(2, 5))  # Piccola pausa per non farli partire tutti insieme
 
-                    attendi_con_messaggio(TEMPO_RIPARTENZA)
-                    continue
-            else:
-                # Carica account da CSV
-                with open(file, newline='', encoding='utf-8') as csvfile:
-                    csvreader = csv.reader(csvfile, delimiter=',')
-                    next(csvreader)  # salta intestazione
-                    
-                    # Leggi tutti gli account rimanenti
-                    accounts = list(csvreader)
-                    
-                    # Se non ci sono più account, esci dal ciclo
-                    if not accounts:
-                        print("Nessun account rimanente nel file CSV")
-                        break
-                    
-                    # Prendi il primo account
-                    row = accounts[0]
-                    email, password = row[0], row[1]
-                    
-                    errore = Accesso_spotify(driver, email, password)
-                    if errore:
-                        print("Accesso non riuscito, rimuovo questo account...")
-                        
-                        # Riscrivi il file CSV escludendo l'account che non ha funzionato
-                        with open(file, 'w', newline='', encoding='utf-8') as csvfile:
-                            csvwriter = csv.writer(csvfile)
-                            # Riscrivi l'intestazione
-                            csvwriter.writerow(['Email', 'Password'])
-                            # Riscrivi gli altri account
-                            for account in accounts[1:]:
-                                csvwriter.writerow(account)
-                        
-                        # Continua con il prossimo ciclo per provare con l'account successivo
-                        continue
-                    
-                    # Se l'accesso ha successo, sposta l'account in fondo al CSV
-                    with open(file, 'w', newline='', encoding='utf-8') as csvfile:
-                        csvwriter = csv.writer(csvfile)
-                        # Riscrivi l'intestazione
-                        csvwriter.writerow(['Email', 'Password'])
-                        # Riscrivi tutti gli altri account
-                        for account in accounts[1:]:
-                            csvwriter.writerow(account)
-                        # Aggiungi l'account usato in fondo
-                        csvwriter.writerow(row)
-            
-             # Seguire playlist dinamicamente
-            if config.get('segui_playlist', False):
-                playlist_da_seguire = config.get('playlist_follow', [])
-                for playlist in playlist_da_seguire:
-                    seguo_playlist(driver, playlist)
-            
-             # Ascoltare canzoni con configurazione avanzata
-            if config.get('ascolta_canzoni', False):
-                # Modalità di selezione delle posizioni
-                modalita_posizioni = config.get('modalita_posizioni', 'random')
-                
-                # Scegli una playlist
-                playlist_ascolto = random.choice(config.get('playlist_urls', []))
-                
-                # Estrai URL pulito
-                playlist_url_clean = playlist_ascolto.split(';')[0]
-      
-                scegli_playlist(driver, playlist_url_clean)
-                
-                # Gestisci la selezione delle posizioni
-                if modalita_posizioni == 'random':
-                    # Genera una posizione casuale tra 1 e 20
-                    posizione = str(random.randint(1, 20))
-                    volte_ripetizione = random.randint(1, 1)
-                    
-                    # Ascolta la canzone
-                    for _ in range(volte_ripetizione):
-                        Sento_canzone(driver, posizione)
-                
-                elif modalita_posizioni == 'statico':
-                    # Ottieni tutte le playlist con configurazioni
-                    playlist_posizioni_fisse = parse_playlist_config(config.get('playlist_urls', []))
-                    
-                    # Itera su tutte le playlist con posizioni specificate
-                    for playlist_url_clean, posizioni in playlist_posizioni_fisse.items():
-                        # Scegli la playlist
-                        scegli_playlist(driver, playlist_url_clean)
-                        
-                        # Ascolta le posizioni specificate
-                        for posizione in posizioni:
-                            volte_ripetizione = random.randint(1, 1)
-                            for _ in range(volte_ripetizione):
-                                Sento_canzone(driver, posizione)
-                    else:
-                        print(f"Playlist non trovata nella configurazione: {playlist_ascolto}")
-            
-            # Input utente per continuare (opzionale)
-            if config.get('input_utente', False):
-                risposta = input("Vuoi continuare con un'altra iterazione? (s/n): ")
-                ripetizione = risposta.lower() == 's'
-            else:
-                # Se non è richiesto input utente, usa il valore di default
-                ripetizione = config.get('ripetizione', False)
-        
-        except Exception as e:
-            print(f"Errore durante l'esecuzione: {e}")
-        
-        finally:
-            # Chiudi sempre il driver
-            if isinstance(credenziali,tuple):
-                driver.close()
-    
-    print("Tutte le riproduzioni sono state eseguite!")
+    # Attendere che tutti finiscano
+    for t in threads:
+        t.join()
 
-def attendi_con_messaggio(secondi):
-    intervallo_messaggio = 600  # 10 minuti in secondi
-    for i in range(secondi, 0, -1):
-        if i % intervallo_messaggio == 0 or i == secondi:  # Stampa ogni 10 minuti o all'inizio
-            print(f"Aspettando... {i} secondi rimasti")
-        sleep(1)
-    print("\nRiprendo il bot...")
 
-# Chiamata principale
 if __name__ == "__main__":
-    print("Benvenuto nel bot Spotify by HunterStile!")
-    esegui_bot_spotify(configurazione_bot)
+    start_bots()
