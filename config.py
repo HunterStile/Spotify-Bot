@@ -6,7 +6,7 @@ CREAZIONE = True
 PROXY = False
 DOPPIOPROXY = False
 #Gestione richiesta robot
-STOP_FOR_ROBOT = True
+STOP_FOR_ROBOT = False
 TEMPO_RIPARTENZA = 7200
 #Gestione del reset
 RESET_ROUTER = False

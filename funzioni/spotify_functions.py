@@ -45,9 +45,11 @@ count = 0                          #sommattore generico
 #XPATH dei bottoni spotify
 menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div/div[5]/button[2]'
 aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
-posizione_brano = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div/div[1]'
-posizione_seguo_playlist = '//*[@id="main"]/div/div[2]/div[4]/div[1]/div[2]/div[2]/div/main/section/div[2]/div[2]/div[2]/div/div/button[1]'
-                    
+
+posizione_brano = '//*[@id="main"]/div/div[2]/div[5]/div/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div/div[1]/div/button'
+posizione_seguo_playlist = '[data-testid="add-button"]'
+
+                            
 
 # Carica le variabili d'ambiente dal file .env
 load_dotenv()
@@ -91,7 +93,8 @@ def configurazione_browser():
     chrome_options.binary_location = leggi_txt(path_chrome)
     # Imposta la posizione della finestra per il secondo schermo
     chrome_options.add_argument("window-position=1920,0")
-    driver =Chrome(service=Service(chrome_driver_path),options=chrome_options)
+    driver = Chrome(service=Service(chrome_driver_path),options=chrome_options)
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     sleep(randint(a,b))
     return driver
 
@@ -375,16 +378,16 @@ def crea_account(driver,proxy,stop_for_robot):
     return email,password,driver
 
 #Seguo la playlist
-def seguo_playlist(driver,link):
+def seguo_playlist(driver, link):
     try:
         driver.get(link)
         sleep(randint(4,5))                     
-        driver.find_element(By.XPATH,posizione_seguo_playlist).click()
+        driver.find_element(By.CSS_SELECTOR, posizione_seguo_playlist).click()
         print("Playlist seguita!")
         sleep(randint(2,3))
     except Exception as e:
         print(f"Errore durante il clic: {str(e)}")
-        sleep(randint(4,5)) 
+        sleep(randint(4,5))
         
 #Accedi ad un account spotify
 def Accesso_spotify(driver,email,password):
