@@ -131,6 +131,12 @@ def configurazione_browser(user_agent):
     print("[BOT] Browser configurato e pronto")
     return driver
 
+# Funzione per scegliere user-agent random
+def get_random_user_agent():
+    with open("user_agents.txt", "r") as file:
+        agents = file.readlines()
+    return random.choice(agents).strip()
+
 #Genero l'indirizzo completo
 def generate_xpath(base_xpath, n):
     return base_xpath.format(n)
