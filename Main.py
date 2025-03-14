@@ -48,7 +48,10 @@ def esegui_bot_spotify(config):
                     change_proxy(config_file_name)
             
             # Configurazione browser
-            driver = configurazione_browser()
+            user_agent = get_random_user_agent()
+            
+            driver = configurazione_browser(user_agent)
+           
 
             # Creazione/Accesso account
             if config.get('crea_account', False):

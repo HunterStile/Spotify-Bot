@@ -23,6 +23,7 @@ import os
 import subprocess
 import pyautogui
 from dotenv import load_dotenv
+from selenium_stealth import stealth
 
 # Ottieni il percorso assoluto della directory corrente (dove si trova il file eseguibile)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -87,15 +88,47 @@ def change_proxy(config_file_name):
         print(f"Errore durante la configurazione del proxy: {e}")
 
 #Configurazione del browser
-def configurazione_browser():
-    chrome_driver_path = leggi_txt(path_driver)
+def configurazione_browser(user_agent):
+    chrome_driver_path = leggi_txt(path_driver)  # Path di ChromeDriver dal tuo file
+    chrome_binary_path = leggi_txt(path_chrome)  # Path di Chrome.exe dal tuo file
+
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = leggi_txt(path_chrome)
-    # Imposta la posizione della finestra per il secondo schermo
+    chrome_options.binary_location = chrome_binary_path
+
+    # Imposta User-Agent personalizzato
+    chrome_options.add_argument(f"user-agent={user_agent}")
+
+    # Disabilita automazioni visibili
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    
+    # Altri parametri utili
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--ignore-certificate-errors")
+
+    # Imposta la posizione della finestra se vuoi su secondo monitor
     chrome_options.add_argument("window-position=1920,0")
-    driver = Chrome(service=Service(chrome_driver_path),options=chrome_options)
+    chrome_options.add_argument("start-maximized")
+
+    # Inizializza il driver
+    driver = webdriver.Chrome(service=Service(chrome_driver_path), options=chrome_options)
+
+    # Applica stealth per evitare detection
+    stealth(driver,
+        languages=["en-US", "en"],
+        vendor="Google Inc.",
+        platform="Win32",
+        webgl_vendor="Intel Inc.",
+        renderer="Intel Iris OpenGL Engine",
+        fix_hairline=True
+    )
+
+    # Nasconde proprietà webdriver
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-    sleep(randint(a,b))
+
+    print("[BOT] Browser configurato e pronto")
     return driver
 
 #Genero l'indirizzo completo
