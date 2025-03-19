@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, font
 import threading
 import sys
 import os
@@ -20,7 +20,35 @@ class SpotifyBotGUI:
     def __init__(self, master):
         self.master = master
         master.title("Spotify Bot Control Panel")
-        master.geometry("600x900")  # Made taller to accommodate new controls
+        master.geometry("900x700")
+        
+        # Define colors
+        self.bg_color = "#121212"  # Spotify dark background
+        self.accent_color = "#1DB954"  # Spotify green
+        self.text_color = "#FFFFFF"  # White text
+        self.secondary_bg = "#212121"  # Slightly lighter background for contrast
+        self.disabled_color = "#535353"  # Gray for disabled elements
+        
+        # Configure the style
+        self.style = ttk.Style()
+        self.style.theme_use('clam')  # Use clam theme as base
+        
+        # Configure colors
+        self.style.configure('TFrame', background=self.bg_color)
+        self.style.configure('TLabelframe', background=self.bg_color, foreground=self.text_color)
+        self.style.configure('TLabelframe.Label', background=self.bg_color, foreground=self.text_color)
+        self.style.configure('TLabel', background=self.bg_color, foreground=self.text_color)
+        self.style.configure('TCheckbutton', background=self.bg_color, foreground=self.text_color)
+        self.style.configure('TRadiobutton', background=self.bg_color, foreground=self.text_color)
+        
+        # Configure the button style
+        self.style.configure('TButton', background=self.accent_color, foreground=self.text_color)
+        self.style.map('TButton', 
+                  background=[('active', self.accent_color), ('disabled', self.disabled_color)],
+                  foreground=[('disabled', self.text_color)])
+
+        # Make the root window use our background color
+        master.configure(bg=self.bg_color)
         
         # Config file path
         self.config_file = "gui_config.json"
@@ -49,83 +77,126 @@ class SpotifyBotGUI:
         self.bot_thread = None
         self.stop_event = threading.Event()
 
+        # Create main frame
+        self.main_frame = ttk.Frame(master, padding=10)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Create top bar with logo/title
+        self.create_header()
+        
+        # Create the actual UI widgets
         self.create_widgets()
         
+    def create_header(self):
+        # Header frame
+        header_frame = ttk.Frame(self.main_frame)
+        header_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        # Title label with custom font
+        title_font = font.Font(family="Arial", size=16, weight="bold")
+        title = tk.Label(header_frame, text="Spotify Bot Controller", 
+                         font=title_font, bg=self.bg_color, fg=self.accent_color)
+        title.pack(side=tk.LEFT)
+        
+        # Add a small Spotify-like icon or separator here if desired
+        
+        # Version info
+        version_label = tk.Label(header_frame, text="v1.1", 
+                               bg=self.bg_color, fg=self.text_color)
+        version_label.pack(side=tk.RIGHT)
+
     def create_widgets(self):
+        # Create two columns
+        left_column = ttk.Frame(self.main_frame)
+        left_column.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        
+        right_column = ttk.Frame(self.main_frame)
+        right_column.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(5, 0))
+        
+        # LEFT COLUMN COMPONENTS
+        
         # Main Configuration Frame
-        config_frame = ttk.LabelFrame(self.master, text="Bot Configuration")
-        config_frame.pack(padx=10, pady=10, fill='x')
+        config_frame = ttk.LabelFrame(left_column, text="Configurazione Principale", padding=10)
+        config_frame.pack(fill=tk.X, pady=(0, 10))
         
-        # Checkboxes in main config
-        ttk.Checkbutton(config_frame, text="Create New Account", variable=self.crea_account_var).pack(anchor='w')
-        ttk.Checkbutton(config_frame, text="Use Proxy", variable=self.proxy_var).pack(anchor='w')
-        ttk.Checkbutton(config_frame, text="Use Double Proxy", variable=self.doppio_proxy_var).pack(anchor='w')
-        ttk.Checkbutton(config_frame, text="Follow Playlists", variable=self.segui_playlist_var).pack(anchor='w')
-        ttk.Checkbutton(config_frame, text="Listen to Songs", variable=self.ascolta_canzoni_var).pack(anchor='w')
-        
-        # Robot Detection Frame
-        robot_frame = ttk.LabelFrame(self.master, text="Robot Detection Settings")
-        robot_frame.pack(padx=10, pady=5, fill='x')
-        
-        ttk.Checkbutton(robot_frame, text="Stop For Robot", variable=self.stop_for_robot_var).pack(anchor='w')
-        
-        tempo_frame = ttk.Frame(robot_frame)
-        tempo_frame.pack(fill='x', pady=5)
-        ttk.Label(tempo_frame, text="Restart Time (seconds):").pack(side='left')
-        ttk.Entry(tempo_frame, textvariable=self.tempo_ripartenza_var, width=10).pack(side='left', padx=5)
-        
-        # Router Reset Frame
-        router_frame = ttk.LabelFrame(self.master, text="Router Reset Settings")
-        router_frame.pack(padx=10, pady=5, fill='x')
-        
-        ttk.Checkbutton(router_frame, text="Reset Router", variable=self.reset_router_var).pack(anchor='w')
-        
-        # Router Type Radio Buttons
-        router_type_frame = ttk.Frame(router_frame)
-        router_type_frame.pack(fill='x', pady=5)
-        ttk.Label(router_type_frame, text="Router Type:").pack(side='left')
-        ttk.Radiobutton(router_type_frame, text="TIM", variable=self.tipo_router_var, value='tim').pack(side='left', padx=10)
-        ttk.Radiobutton(router_type_frame, text="Vodafone", variable=self.tipo_router_var, value='vodafone').pack(side='left')
+        # Use a grid layout for better alignment
+        ttk.Checkbutton(config_frame, text="Crea Nuovo Account", variable=self.crea_account_var).grid(row=0, column=0, sticky=tk.W, pady=2)
+        ttk.Checkbutton(config_frame, text="Usa Proxy", variable=self.proxy_var).grid(row=1, column=0, sticky=tk.W, pady=2)
+        ttk.Checkbutton(config_frame, text="Usa Doppio Proxy", variable=self.doppio_proxy_var).grid(row=2, column=0, sticky=tk.W, pady=2)
+        ttk.Checkbutton(config_frame, text="Segui Playlist", variable=self.segui_playlist_var).grid(row=0, column=1, sticky=tk.W, pady=2)
+        ttk.Checkbutton(config_frame, text="Ascolta Canzoni", variable=self.ascolta_canzoni_var).grid(row=1, column=1, sticky=tk.W, pady=2)
         
         # Max Iterations
-        max_iter_frame = ttk.Frame(config_frame)
-        max_iter_frame.pack(fill='x', pady=5)
-        ttk.Label(max_iter_frame, text="Max Iterations:").pack(side='left')
-        ttk.Entry(max_iter_frame, textvariable=self.max_iterazioni_var, width=10).pack(side='left', padx=5)
+        iter_frame = ttk.Frame(config_frame)
+        iter_frame.grid(row=3, column=0, columnspan=2, sticky=tk.W, pady=5)
+        ttk.Label(iter_frame, text="Iterazioni Max:").pack(side=tk.LEFT)
+        ttk.Entry(iter_frame, textvariable=self.max_iterazioni_var, width=8).pack(side=tk.LEFT, padx=5)
         
-        # Modalità Posizioni
-        modalita_frame = ttk.LabelFrame(self.master, text="Position Selection Mode")
-        modalita_frame.pack(padx=10, pady=5, fill='x')
+        # Position Mode Frame
+        position_frame = ttk.LabelFrame(left_column, text="Modalità Posizioni", padding=10)
+        position_frame.pack(fill=tk.X, pady=(0, 10))
         
-        random_radio = ttk.Radiobutton(modalita_frame, text="Random", variable=self.modalita_posizioni_var, value='random')
-        random_radio.pack(side='left', padx=10)
+        # Radio buttons for position mode
+        ttk.Radiobutton(position_frame, text="Casuale", variable=self.modalita_posizioni_var, value='random').pack(side=tk.LEFT, padx=10)
+        ttk.Radiobutton(position_frame, text="Statico", variable=self.modalita_posizioni_var, value='statico').pack(side=tk.LEFT, padx=10)
         
-        statico_radio = ttk.Radiobutton(modalita_frame, text="Static", variable=self.modalita_posizioni_var, value='statico')
-        statico_radio.pack(side='left', padx=10)
+        # Robot Detection Frame
+        robot_frame = ttk.LabelFrame(left_column, text="Rilevamento Robot", padding=10)
+        robot_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        ttk.Checkbutton(robot_frame, text="Ferma per Rilevamento Robot", variable=self.stop_for_robot_var).grid(row=0, column=0, sticky=tk.W, pady=2)
+        
+        ttk.Label(robot_frame, text="Tempo di Ripartenza (sec):").grid(row=1, column=0, sticky=tk.W, pady=2)
+        ttk.Entry(robot_frame, textvariable=self.tempo_ripartenza_var, width=8).grid(row=1, column=1, sticky=tk.W, pady=2)
+        
+        # Router Reset Frame
+        router_frame = ttk.LabelFrame(left_column, text="Reset Router", padding=10)
+        router_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        ttk.Checkbutton(router_frame, text="Reset Router", variable=self.reset_router_var).grid(row=0, column=0, sticky=tk.W, pady=2)
+        
+        ttk.Label(router_frame, text="Tipo Router:").grid(row=1, column=0, sticky=tk.W, pady=2)
+        ttk.Radiobutton(router_frame, text="TIM", variable=self.tipo_router_var, value='tim').grid(row=1, column=1, sticky=tk.W, pady=2)
+        ttk.Radiobutton(router_frame, text="Vodafone", variable=self.tipo_router_var, value='vodafone').grid(row=1, column=2, sticky=tk.W, pady=2)
+        
+        # RIGHT COLUMN COMPONENTS
+        
+        # Playlist Configuration
+        playlist_frame = ttk.LabelFrame(right_column, text="Configurazione Playlist", padding=10)
+        playlist_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        
+        # Playlist URLs for listening
+        ttk.Label(playlist_frame, text="Playlist da Ascoltare (formato: url;pos1,pos2,pos3)").pack(anchor='w', pady=(0, 2))
+        playlist_urls_text = tk.Text(playlist_frame, height=6, bg=self.secondary_bg, fg=self.text_color)
+        playlist_urls_text.insert(tk.END, self.playlist_urls_var.get())
+        playlist_urls_text.pack(fill=tk.BOTH, expand=True, pady=(0, 5))
+        playlist_urls_text.bind('<KeyRelease>', lambda e: self.playlist_urls_var.set(playlist_urls_text.get("1.0", tk.END).strip()))
+        
+        # Playlist URLs for following
+        ttk.Label(playlist_frame, text="Playlist da Seguire (una per riga)").pack(anchor='w', pady=(0, 2))
+        playlist_follow_text = tk.Text(playlist_frame, height=6, bg=self.secondary_bg, fg=self.text_color)
+        playlist_follow_text.insert(tk.END, self.playlist_follow_var.get())
+        playlist_follow_text.pack(fill=tk.BOTH, expand=True)
+        playlist_follow_text.bind('<KeyRelease>', lambda e: self.playlist_follow_var.set(playlist_follow_text.get("1.0", tk.END).strip()))
         
         # Proxy Lists
-        proxy_frame = ttk.LabelFrame(self.master, text="Proxy Lists")
-        proxy_frame.pack(padx=10, pady=5, fill='both', expand=True)
+        proxy_frame = ttk.LabelFrame(right_column, text="Liste Proxy", padding=10)
+        proxy_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
         
         # Main Proxy List
-        proxy_main_frame = ttk.Frame(proxy_frame)
-        proxy_main_frame.pack(fill='x', pady=5)
-        ttk.Label(proxy_main_frame, text="Main Proxy List (one per line)").pack(side='top', anchor='w')
-        proxy_text = tk.Text(proxy_main_frame, height=4)
+        ttk.Label(proxy_frame, text="Lista Proxy Principale (una per riga)").pack(anchor='w', pady=(0, 2))
+        proxy_text = tk.Text(proxy_frame, height=5, bg=self.secondary_bg, fg=self.text_color)
         proxy_text.insert(tk.END, self.proxy_list_var.get())
-        proxy_text.pack(fill='both', expand=True)
+        proxy_text.pack(fill=tk.BOTH, expand=True, pady=(0, 5))
         proxy_text.bind('<KeyRelease>', lambda e: self.proxy_list_var.set(proxy_text.get("1.0", tk.END).strip()))
         
-        # First Proxy List (for double proxy)
-        proxy_first_frame = ttk.Frame(proxy_frame)
-        proxy_first_frame.pack(fill='x', pady=5)
-        first_proxy_label = ttk.Label(proxy_first_frame, text="First Proxy List (used when Double Proxy is enabled)")
-        first_proxy_label.pack(side='top', anchor='w')
-        proxy_first_text = tk.Text(proxy_first_frame, height=4)
+        # First Proxy List
+        ttk.Label(proxy_frame, text="Lista Proxy Primaria (usata con Doppio Proxy)").pack(anchor='w', pady=(0, 2))
+        proxy_first_text = tk.Text(proxy_frame, height=5, bg=self.secondary_bg, fg=self.text_color)
         proxy_first_text.insert(tk.END, self.proxy_list_first_var.get())
-        proxy_first_text.pack(fill='both', expand=True)
+        proxy_first_text.pack(fill=tk.BOTH, expand=True)
         proxy_first_text.bind('<KeyRelease>', lambda e: self.proxy_list_first_var.set(proxy_first_text.get("1.0", tk.END).strip()))
-
+        
         # Update proxy text states based on checkbox
         def update_proxy_states(*args):
             proxy_enabled = self.proxy_var.get()
@@ -133,49 +204,43 @@ class SpotifyBotGUI:
             
             proxy_text['state'] = 'normal' if proxy_enabled else 'disabled'
             proxy_first_text['state'] = 'normal' if proxy_enabled and double_proxy_enabled else 'disabled'
-            first_proxy_label['state'] = 'normal' if proxy_enabled else 'disabled'
         
         # Bind the update function to the checkboxes
         self.proxy_var.trace('w', update_proxy_states)
         self.doppio_proxy_var.trace('w', update_proxy_states)
         
-        # Initial state update
-        update_proxy_states()
+        # Control Buttons and Console Output
+        bottom_frame = ttk.Frame(self.main_frame)
+        bottom_frame.pack(fill=tk.X, pady=10)
         
-        # Playlist Configuration
-        playlist_frame = ttk.LabelFrame(self.master, text="Playlist Configuration")
-        playlist_frame.pack(padx=10, pady=5, fill='both', expand=True)
-        
-        # Playlist URLs for listening
-        ttk.Label(playlist_frame, text="Playlist URLs for Listening (format: url;pos1,pos2,pos3)").pack(anchor='w')
-        playlist_urls_text = tk.Text(playlist_frame, height=4)
-        playlist_urls_text.insert(tk.END, self.playlist_urls_var.get())
-        playlist_urls_text.pack(padx=5, pady=5, fill='both')
-        playlist_urls_text.bind('<KeyRelease>', lambda e: self.playlist_urls_var.set(playlist_urls_text.get("1.0", tk.END).strip()))
-        
-        # Playlist URLs for following
-        ttk.Label(playlist_frame, text="Playlist URLs for Following (one per line)").pack(anchor='w')
-        playlist_follow_text = tk.Text(playlist_frame, height=4)
-        playlist_follow_text.insert(tk.END, self.playlist_follow_var.get())
-        playlist_follow_text.pack(padx=5, pady=5, fill='both')
-        playlist_follow_text.bind('<KeyRelease>', lambda e: self.playlist_follow_var.set(playlist_follow_text.get("1.0", tk.END).strip()))
-        
-        # Buttons
-        button_frame = ttk.Frame(self.master)
+        # Buttons Frame with more space
+        button_frame = ttk.Frame(bottom_frame)
         button_frame.pack(pady=10)
         
-        self.start_button = ttk.Button(button_frame, text="Start Bot", command=self.start_bot)
-        self.start_button.pack(side='left', padx=5)
+        self.start_button = ttk.Button(button_frame, text="Avvia Bot", command=self.start_bot, width=15)
+        self.start_button.pack(side=tk.LEFT, padx=10)
         
-        self.stop_button = ttk.Button(button_frame, text="Stop Bot", command=self.stop_bot, state='disabled')
-        self.stop_button.pack(side='left', padx=5)
+        self.stop_button = ttk.Button(button_frame, text="Ferma Bot", command=self.stop_bot, width=15, state='disabled')
+        self.stop_button.pack(side=tk.LEFT, padx=10)
+        
+        save_button = ttk.Button(button_frame, text="Salva Configurazione", command=self.save_config, width=20)
+        save_button.pack(side=tk.LEFT, padx=10)
         
         # Console Output
-        console_frame = ttk.LabelFrame(self.master, text="Console Output")
-        console_frame.pack(padx=10, pady=10, fill='both', expand=True)
-        self.console_text = tk.Text(console_frame, height=10, state='disabled')
-        self.console_text.pack(padx=5, pady=5, fill='both', expand=True)
+        console_frame = ttk.LabelFrame(self.main_frame, text="Console Output", padding=10)
+        console_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
         
+        self.console_text = tk.Text(console_frame, height=10, bg=self.secondary_bg, fg=self.text_color, state='disabled')
+        self.console_text.pack(fill=tk.BOTH, expand=True)
+        
+        # Add scrollbar to console
+        scrollbar = ttk.Scrollbar(self.console_text, command=self.console_text.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.console_text.config(yscrollcommand=scrollbar.set)
+        
+        # Initial state update
+        update_proxy_states()
+
     def load_config(self):
         try:
             if os.path.exists(self.config_file):
@@ -214,9 +279,9 @@ class SpotifyBotGUI:
                 self.playlist_urls_var = tk.StringVar(value='\n'.join(playlist_urls))
                 self.playlist_follow_var = tk.StringVar(value='\n'.join(playlist_follow))
                 
-                print("Configuration loaded successfully from", self.config_file)
+                print("Configurazione caricata con successo da", self.config_file)
             else:
-                print("No saved configuration found, using defaults")
+                print("Nessuna configurazione salvata trovata, utilizzando valori predefiniti")
                 # Use defaults from config module
                 self.crea_account_var = tk.BooleanVar(value=config_module.CREAZIONE)
                 self.proxy_var = tk.BooleanVar(value=config_module.PROXY)
@@ -238,8 +303,8 @@ class SpotifyBotGUI:
                 self.playlist_follow_var = tk.StringVar(value='\n'.join(config_module.PLAYLIST_FOLLOW))
                 
         except Exception as e:
-            print(f"Error loading configuration: {str(e)}")
-            messagebox.showerror("Configuration Error", f"Error loading configuration: {str(e)}")
+            print(f"Errore durante il caricamento della configurazione: {str(e)}")
+            messagebox.showerror("Errore Configurazione", f"Errore durante il caricamento della configurazione: {str(e)}")
             # Use defaults if there's an error
             self.crea_account_var = tk.BooleanVar(value=config_module.CREAZIONE)
             self.proxy_var = tk.BooleanVar(value=config_module.PROXY)
@@ -282,12 +347,27 @@ class SpotifyBotGUI:
         try:
             with open(self.config_file, 'w') as f:
                 json.dump(config_data, f, indent=4)
+            
+            # Display a success message in the console
+            self.log_to_console("Configurazione salvata con successo.")
         except Exception as e:
-            messagebox.showerror("Save Error", f"Error saving configuration: {str(e)}")
+            messagebox.showerror("Errore di Salvataggio", f"Errore durante il salvataggio della configurazione: {str(e)}")
+    
+    def log_to_console(self, message):
+        """Add a message to the console widget"""
+        self.console_text.configure(state='normal')
+        self.console_text.insert(tk.END, message + "\n")
+        self.console_text.see(tk.END)
+        self.console_text.configure(state='disabled')
 
     def start_bot(self):
         # Save configuration before starting the bot
         self.save_config()
+        
+        # Clear the console
+        self.console_text.configure(state='normal')
+        self.console_text.delete(1.0, tk.END)
+        self.console_text.configure(state='disabled')
         
         # Prepare configuration dictionary
         configurazione_bot = {
@@ -372,7 +452,7 @@ class SpotifyBotGUI:
             esegui_bot_spotify(configurazione_bot)
         
         except Exception as e:
-            messagebox.showerror("Bot Error", str(e))
+            messagebox.showerror("Errore Bot", str(e))
         finally:
             # Reset UI
             self.master.after(0, self.reset_ui)
@@ -380,7 +460,8 @@ class SpotifyBotGUI:
     def stop_bot(self):
         # Implement graceful shutdown mechanism
         self.stop_event.set()
-        messagebox.showinfo("Bot Stopped", "Bot execution has been stopped.")
+        self.log_to_console("Bot in fase di arresto...")
+        messagebox.showinfo("Bot Fermato", "L'esecuzione del bot è stata interrotta.")
         
         # Reset UI
         self.reset_ui()
