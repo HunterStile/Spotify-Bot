@@ -3,6 +3,7 @@ from time import sleep
 from funzioni.spotify_functions import *
 from config import *
 import re
+import os
 
 def parse_playlist_config(playlist_urls):
     """
@@ -23,11 +24,32 @@ def parse_playlist_config(playlist_urls):
 def esegui_bot_spotify(config):
     count_creazione = 0
     count_accesso = 0
-    ripetizione = config.get('ripetizione', True)  # Get from config or default to True
-    count = 0  # Initialize count for tracking iterations
+    ripetizione = config.get('ripetizione', True)
+    count = 0
+    
+    # Get the stop event from config if available
+    stop_event = config.get('stop_event', None)
+    driver = None
+
+    # Cleanup environment if clean_start is requested
+    if config.get('clean_start', False):
+        print("Inizializzazione dell'ambiente pulito...")
+        try:
+            # Clear any temporary browser files that might cause issues
+            if os.path.exists('chrome_debug.log'):
+                os.remove('chrome_debug.log')
+                
+            # You can add more cleanup steps here as needed
+        except Exception as e:
+            print(f"Errore durante la pulizia iniziale: {str(e)}")
 
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
-        count += 1  # Increment iteration count
+        # Check for stop event at the beginning of each iteration
+        if stop_event and stop_event.is_set():
+            print("Interruzione richiesta, arresto del bot...")
+            break
+        
+        count += 1
 
         if config.get('crea_account', False):
             count_creazione += 1
@@ -60,6 +82,13 @@ def esegui_bot_spotify(config):
             user_agent = get_random_user_agent()
             driver = configurazione_browser(user_agent)
 
+            # Check for stop event after browser setup
+            if stop_event and stop_event.is_set():
+                print("Interruzione richiesta, chiusura del browser...")
+                if driver:
+                    driver.quit()
+                break
+
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
@@ -70,6 +99,14 @@ def esegui_bot_spotify(config):
                     proxy_list=config.get('proxy_list', []),
                     proxy_list_first=config.get('proxy_list_first', []) if config.get('doppio_proxy', False) else None
                 )
+                
+                # Check for stop event after account creation
+                if stop_event and stop_event.is_set():
+                    print("Interruzione richiesta, chiusura del browser...")
+                    if driver:
+                        driver.quit()
+                    break
+                
                 if isinstance(credenziali,tuple):
                     email = credenziali[0]
                     password = credenziali[1]
@@ -89,7 +126,9 @@ def esegui_bot_spotify(config):
                             print("Non posso cambiare il tipo di router scelto..")
                             driver.close()
 
-                    attendi_con_messaggio(config.get('tempo_ripartenza', 7200))
+                    attendi_con_messaggio(config.get('tempo_ripartenza', 7200), stop_event)
+                    if stop_event and stop_event.is_set():
+                        break
                     continue
             else:
                 # Carica account da CSV
@@ -136,12 +175,29 @@ def esegui_bot_spotify(config):
                         # Aggiungi l'account usato in fondo
                         csvwriter.writerow(row)
             
+            # Check for stop event before playlist operations
+            if stop_event and stop_event.is_set():
+                print("Interruzione richiesta, chiusura del browser...")
+                if driver:
+                    driver.quit()
+                break
+                
             # Seguire playlist dinamicamente
             if config.get('segui_playlist', False):
                 playlist_da_seguire = config.get('playlist_follow', [])
                 for playlist in playlist_da_seguire:
+                    # Check for stop event in playlist loop
+                    if stop_event and stop_event.is_set():
+                        break
                     seguo_playlist(driver, playlist)
             
+            # Check for stop event before listening to songs
+            if stop_event and stop_event.is_set():
+                print("Interruzione richiesta, chiusura del browser...")
+                if driver:
+                    driver.quit()
+                break
+                
             # Ascoltare canzoni con configurazione avanzata
             if config.get('ascolta_canzoni', False):
                 # Modalità di selezione delle posizioni
@@ -163,6 +219,9 @@ def esegui_bot_spotify(config):
                     
                     # Ascolta la canzone
                     for _ in range(volte_ripetizione):
+                        # Check for stop event in song loop
+                        if stop_event and stop_event.is_set():
+                            break
                         Sento_canzone(driver, posizione)
                 
                 elif modalita_posizioni == 'statico':
@@ -171,13 +230,24 @@ def esegui_bot_spotify(config):
                     
                     # Itera su tutte le playlist con posizioni specificate
                     for playlist_url_clean, posizioni in playlist_posizioni_fisse.items():
+                        # Check for stop event in playlist loop
+                        if stop_event and stop_event.is_set():
+                            break
+                            
                         # Scegli la playlist
                         scegli_playlist(driver, playlist_url_clean)
                         
                         # Ascolta le posizioni specificate
                         for posizione in posizioni:
+                            # Check for stop event in position loop
+                            if stop_event and stop_event.is_set():
+                                break
+                                
                             volte_ripetizione = random.randint(1, 1)
                             for _ in range(volte_ripetizione):
+                                # Check for stop event in repetition loop
+                                if stop_event and stop_event.is_set():
+                                    break
                                 Sento_canzone(driver, posizione)
                     else:
                         print(f"Playlist non trovata nella configurazione: {playlist_ascolto}")
@@ -195,14 +265,33 @@ def esegui_bot_spotify(config):
         
         finally:
             # Chiudi sempre il driver
-            if 'driver' in locals():
-                driver.close()
+            if driver:
+                try:
+                    driver.quit()
+                except Exception as e:
+                    print(f"Errore durante la chiusura del driver: {e}")
     
     print("Tutte le riproduzioni sono state eseguite!")
+    
+    # Make sure driver is closed on exit
+    if driver:
+        try:
+            driver.quit()
+        except Exception as e:
+            print(f"Errore durante la chiusura finale del driver: {e}")
 
-def attendi_con_messaggio(secondi):
+def attendi_con_messaggio(secondi, stop_event=None):
+    """
+    Attendi per un certo numero di secondi, mostrando messaggi periodici
+    e controllando se è stato richiesto l'arresto.
+    """
     intervallo_messaggio = 600  # 10 minuti in secondi
     for i in range(secondi, 0, -1):
+        # Check if stop requested
+        if stop_event and stop_event.is_set():
+            print("Interruzione richiesta durante l'attesa.")
+            return
+            
         if i % intervallo_messaggio == 0 or i == secondi:  # Stampa ogni 10 minuti o all'inizio
             print(f"Aspettando... {i} secondi rimasti")
         sleep(1)

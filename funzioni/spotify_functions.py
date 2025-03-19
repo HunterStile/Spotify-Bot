@@ -24,6 +24,7 @@ import subprocess
 import pyautogui
 from dotenv import load_dotenv
 from selenium_stealth import stealth
+from selenium.webdriver.chrome.options import Options
 
 # Ottieni il percorso assoluto della directory corrente (dove si trova il file eseguibile)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -107,29 +108,44 @@ def configurazione_browser(user_agent):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--ignore-certificate-errors")
-
+    
+    # Clean session options (nuovi parametri per avvio pulito)
+    chrome_options.add_argument("--incognito")  # Usa modalità incognito per evitare conflitti di sessione
+    chrome_options.add_argument("--disable-application-cache")  # Disabilita cache
+    chrome_options.add_argument("--disable-session-crashed-bubble")  # Disabilita segnalazione crash
+    chrome_options.add_argument("--disable-restore-session-state")  # Previene ripristino sessione
+    
     # Imposta la posizione della finestra se vuoi su secondo monitor
     chrome_options.add_argument("window-position=1920,0")
     chrome_options.add_argument("start-maximized")
 
-    # Inizializza il driver
-    driver = webdriver.Chrome(service=Service(chrome_driver_path), options=chrome_options)
-
-    # Applica stealth per evitare detection
-    stealth(driver,
-        languages=["en-US", "en"],
-        vendor="Google Inc.",
-        platform="Win32",
-        webgl_vendor="Intel Inc.",
-        renderer="Intel Iris OpenGL Engine",
-        fix_hairline=True
-    )
-
-    # Nasconde proprietà webdriver
-    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-
-    print("[BOT] Browser configurato e pronto")
-    return driver
+    try:
+        # Inizializza il driver
+        driver = webdriver.Chrome(service=Service(chrome_driver_path), options=chrome_options)
+        
+        # Applica stealth per evitare detection
+        stealth(driver,
+            languages=["en-US", "en"],
+            vendor="Google Inc.",
+            platform="Win32",
+            webgl_vendor="Intel Inc.",
+            renderer="Intel Iris OpenGL Engine",
+            fix_hairline=True
+        )
+    
+        # Nasconde proprietà webdriver
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    
+        print("[BOT] Browser configurato e pronto")
+        return driver
+    except Exception as e:
+        print(f"Errore durante la configurazione del browser: {str(e)}")
+        # In caso di errore, prova una configurazione più semplice
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-extensions")
+        driver = webdriver.Chrome(service=Service(chrome_driver_path), options=chrome_options)
+        print("[BOT] Browser configurato con opzioni di fallback")
+        return driver
 
 # Funzione per scegliere user-agent random
 def get_random_user_agent():

@@ -6,6 +6,8 @@ import os
 import json
 import importlib.util
 import ctypes
+import time
+from time import sleep
 
 # Import the existing bot configuration and execution function
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -364,10 +366,21 @@ class SpotifyBotGUI:
         # Save configuration before starting the bot
         self.save_config()
         
+        # Clean up any existing processes BEFORE starting new ones
+        self.log_to_console("Pulizia dell'ambiente di esecuzione...")
+        self.terminate_selenium_drivers()
+        
+        # Short delay to ensure processes are fully terminated
+        self.log_to_console("Attendere mentre si preparano le risorse...")
+        self.master.update()  # Update the GUI to show the message
+        sleep(1.5)  # Wait a bit to ensure all processes are terminated
+        
         # Clear the console
         self.console_text.configure(state='normal')
         self.console_text.delete(1.0, tk.END)
         self.console_text.configure(state='disabled')
+        
+        self.log_to_console("Avvio del bot in corso...")
         
         # Prepare configuration dictionary
         configurazione_bot = {
@@ -392,6 +405,7 @@ class SpotifyBotGUI:
             
             'modalita_posizioni': self.modalita_posizioni_var.get(),
             'ascolta_canzoni': self.ascolta_canzoni_var.get(),
+            'clean_start': True,  # Flag to indicate a clean start
         }
         
         # Validazione delle configurazioni
@@ -430,6 +444,9 @@ class SpotifyBotGUI:
     
     def run_bot(self, configurazione_bot):
         try:
+            # Add a reference to this instance in configuration
+            configurazione_bot['gui_instance'] = self
+            
             # Redirect stdout to console text widget
             class TextRedirector:
                 def __init__(self, widget, tag="stdout"):
@@ -458,14 +475,72 @@ class SpotifyBotGUI:
             self.master.after(0, self.reset_ui)
     
     def stop_bot(self):
-        # Implement graceful shutdown mechanism
+        """
+        Implements graceful shutdown mechanism with driver cleanup.
+        This method ensures all Selenium drivers are properly closed.
+        """
+        # Set the stop event to signal the bot to stop
         self.stop_event.set()
         self.log_to_console("Bot in fase di arresto...")
+        
+        # Try to terminate any active Selenium processes
+        self.terminate_selenium_drivers()
+        
         messagebox.showinfo("Bot Fermato", "L'esecuzione del bot è stata interrotta.")
         
         # Reset UI
         self.reset_ui()
     
+    def terminate_selenium_drivers(self):
+        """
+        Force terminate any running Selenium driver processes
+        and ensure they are properly cleaned up
+        """
+        try:
+            # Try to find and kill Selenium driver processes
+            if sys.platform.startswith('win'):
+                # On Windows
+                self.log_to_console("Terminazione dei processi di Chrome/Selenium...")
+                os.system("taskkill /f /im chromedriver.exe >nul 2>&1")
+                os.system("taskkill /f /im chrome.exe >nul 2>&1")
+                
+                # More aggressive process killing for orphaned processes
+                os.system("wmic process where \"name like '%chrome%'\" delete >nul 2>&1")
+                
+                # Clean up temp files that might cause issues
+                temp_dir = os.environ.get('TEMP', '')
+                if temp_dir and os.path.exists(temp_dir):
+                    self.log_to_console("Pulizia dei file temporanei di Chrome...")
+                    chrome_temp = os.path.join(temp_dir, 'chrome_*')
+                    os.system(f'del /q /f /s "{chrome_temp}" >nul 2>&1')
+                    
+            elif sys.platform.startswith('linux'):
+                # On Linux
+                self.log_to_console("Terminazione dei processi di Chrome/Selenium...")
+                os.system("pkill -9 -f chromedriver")
+                os.system("pkill -9 -f chrome")
+                
+                # Clean Linux temp files
+                os.system("rm -rf /tmp/.com.google.Chrome*")
+                os.system("rm -rf /tmp/.org.chromium.Chromium*")
+                
+            elif sys.platform.startswith('darwin'):
+                # On macOS
+                self.log_to_console("Terminazione dei processi di Chrome/Selenium...")
+                os.system("pkill -9 -f chromedriver")
+                os.system("pkill -9 -f 'Google Chrome'")
+                
+                # Clean macOS temp files
+                os.system("rm -rf ~/Library/Caches/Google/Chrome")
+                
+            # Short delay to ensure processes have time to terminate
+            self.log_to_console("Attesa per chiusura completa dei processi...")
+            sleep(1)  # Usa sleep dal 'from time import sleep' invece di time.sleep
+            self.log_to_console("Terminazione dei processi completata.")
+            
+        except Exception as e:
+            self.log_to_console(f"Errore durante la terminazione dei processi: {str(e)}")
+            
     def reset_ui(self):
         # Reset button states
         self.start_button['state'] = 'normal'
