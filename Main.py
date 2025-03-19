@@ -23,9 +23,8 @@ def parse_playlist_config(playlist_urls):
 def esegui_bot_spotify(config):
     count_creazione = 0
     count_accesso = 0
-    ripetizione = True
+    ripetizione = config.get('ripetizione', True)  # Get from config or default to True
     count = 0  # Initialize count for tracking iterations
-
 
     while ripetizione and (config.get('max_iterazioni', float('inf')) > count):
         count += 1  # Increment iteration count
@@ -37,45 +36,60 @@ def esegui_bot_spotify(config):
             count_accesso += 1
             print(f"{count_accesso}° Accesso")
         
-        
-        
         try:
             # Gestione Proxy (opzionale)
             if config.get('usa_proxy', False):
-                proxy_list = config.get('proxy_list_first', [])
-                if proxy_list:
+                proxy_list = None
+                if config.get('doppio_proxy', False):
+                    # Se doppio proxy è attivo, usa proxy_list_first
+                    proxy_list = config.get('proxy_list_first', [])
+                    print("Usando lista proxy primaria (doppio proxy attivo):", proxy_list)
+                else:
+                    # Altrimenti usa proxy_list normale
+                    proxy_list = config.get('proxy_list', [])
+                    print("Usando lista proxy standard:", proxy_list)
+                
+                if proxy_list and len(proxy_list) > 0:
                     config_file_name = random.choice(proxy_list)
+                    print(f"Selezionato proxy: {config_file_name}")
                     change_proxy(config_file_name)
+                else:
+                    print("Attenzione: Lista proxy vuota!")
             
             # Configurazione browser
             user_agent = get_random_user_agent()
-            
             driver = configurazione_browser(user_agent)
-           
 
             # Creazione/Accesso account
             if config.get('crea_account', False):
                 # Crea nuovo account
-                credenziali = crea_account(driver, DOPPIOPROXY,STOP_FOR_ROBOT)
+                credenziali = crea_account(
+                    driver, 
+                    config.get('usa_proxy', False), 
+                    config.get('stop_for_robot', False),
+                    proxy_list=config.get('proxy_list', []),
+                    proxy_list_first=config.get('proxy_list_first', []) if config.get('doppio_proxy', False) else None
+                )
                 if isinstance(credenziali,tuple):
                     email = credenziali[0]
                     password = credenziali[1]
                     driver = credenziali[2]
                 else:
-                    print("Bot rilevato,attendi un attimo...")
+                    print("Bot rilevato, attendi un attimo...")
 
-                    if RESET_ROUTER == True:
-                        if TIPO_ROUTER == 'tim':
+                    if config.get('reset_router', False):
+                        tipo_router = config.get('tipo_router', '')
+                        if tipo_router == 'tim':
                             reset_router_tim(driver)
                             driver.close()
-                        elif TIPO_ROUTER == 'vodafone':
+                        elif tipo_router == 'vodafone':
                             reset_router_vodafone(driver)
                             driver.close()
                         else:
                             print("Non posso cambiare il tipo di router scelto..")
                             driver.close()
 
-                    attendi_con_messaggio(TEMPO_RIPARTENZA)
+                    attendi_con_messaggio(config.get('tempo_ripartenza', 7200))
                     continue
             else:
                 # Carica account da CSV
@@ -122,13 +136,13 @@ def esegui_bot_spotify(config):
                         # Aggiungi l'account usato in fondo
                         csvwriter.writerow(row)
             
-             # Seguire playlist dinamicamente
+            # Seguire playlist dinamicamente
             if config.get('segui_playlist', False):
                 playlist_da_seguire = config.get('playlist_follow', [])
                 for playlist in playlist_da_seguire:
                     seguo_playlist(driver, playlist)
             
-             # Ascoltare canzoni con configurazione avanzata
+            # Ascoltare canzoni con configurazione avanzata
             if config.get('ascolta_canzoni', False):
                 # Modalità di selezione delle posizioni
                 modalita_posizioni = config.get('modalita_posizioni', 'random')
@@ -181,7 +195,7 @@ def esegui_bot_spotify(config):
         
         finally:
             # Chiudi sempre il driver
-            if isinstance(credenziali,tuple):
+            if 'driver' in locals():
                 driver.close()
     
     print("Tutte le riproduzioni sono state eseguite!")

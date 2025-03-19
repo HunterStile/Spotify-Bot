@@ -5,3 +5,4 @@ __pycache__/
 account_spotify_creati.csv
 #ignoro le variabili d'ambiente
 .env
+gui_config.json

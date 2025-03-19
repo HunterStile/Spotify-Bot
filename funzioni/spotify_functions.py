@@ -279,7 +279,7 @@ def reset_router_vodafone(driver):
 # FUNZIONI SPOTIFY #
 
 #Crea un account spotify
-def crea_account(driver,proxy,stop_for_robot):
+def crea_account(driver, proxy, stop_for_robot, proxy_list=None, proxy_list_first=None):
     #variabili - logiche
     robot2 = False
     robot = False
@@ -365,9 +365,15 @@ def crea_account(driver,proxy,stop_for_robot):
     sleep(randint(a,b))
     driver.find_element(By.XPATH,'//*[@id="__next"]/main/main/section/div/form/div[2]/button/span[1]').click()
     sleep(randint(6,7))
-    if proxy == True :
-        config_file_name = random.choice(PROXYLIST)
-        change_proxy(config_file_name)
+    if proxy == True:
+        # Usa sempre la lista proxy standard in questa funzione
+        if proxy_list and len(proxy_list) > 0:
+            config_file_name = random.choice(proxy_list)
+            print("Usando proxy dalla lista standard:", config_file_name)
+            change_proxy(config_file_name)
+        else:
+            print("Attenzione: Lista proxy vuota!")
+            return None
       
     #FINE CREAZIONE ACCCOUNT
     
