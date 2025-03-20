@@ -94,7 +94,7 @@ def esegui_bot_spotify(config):
                 # Crea nuovo account
                 credenziali = crea_account(
                     driver, 
-                    config.get('usa_proxy', False), 
+                    config.get('doppio_proxy', False), 
                     config.get('stop_for_robot', False),
                     proxy_list=config.get('proxy_list', []),
                     proxy_list_first=config.get('proxy_list_first', []) if config.get('doppio_proxy', False) else None
