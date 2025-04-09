@@ -45,10 +45,10 @@ b = 2                              #tempo massimo di attesa negli slepp
 count = 0                          #sommattore generico
 
 #XPATH dei bottoni spotify
-menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[{}]/div/div[5]/button[2]'
+menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/main/div[1]/section/div[2]/div[3]/div[1]/div[2]/div[2]/div[]/div/div[5]/button[2]'
 aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
 
-posizione_brano = '//*[@id="main"]/div/div[2]/div[5]/div/div[2]/div[2]/div/main/section/div[2]/div[3]/div/div[1]/div[2]/div[2]/div[{}]/div/div[1]/div/button'
+posizione_brano = '//*[@id="main"]/div/div[2]/div[5]/div/div[2]/div[1]/div/main/section/div[2]/div[3]/div/div[1]/div/div[2]/div[2]/div[{}]/div'
 posizione_seguo_playlist = '[data-testid="add-button"]'
 
                             
