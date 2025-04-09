@@ -49,6 +49,7 @@ menu_canzone = '//*[@id="main"]/div/div[2]/div[3]/div[1]/div[2]/div[2]/div[2]/ma
 aggiungi_playlist = '//*[@id="tippy-2"]/ul/div/li[{}]/button'
 
 posizione_brano = '//*[@id="main"]/div/div[2]/div[5]/div/div[2]/div[1]/div/main/section/div[2]/div[3]/div/div[1]/div/div[2]/div[2]/div[{}]/div'
+posizione_brano2 = '//*[@id="main"]/div/div/div/div/div[2]/div/div[2]/div/div/div[{}]/div/div[1]'
 posizione_seguo_playlist = '[data-testid="add-button"]'
 
                             
@@ -476,9 +477,25 @@ def Accesso_spotify(driver,email,password):
 #Ascolto una specifica canzone in una playlit
 def Sento_canzone(driver,posizione):
     print("Ascolto la canzone..")
-    xpath = generate_xpath(posizione_brano,posizione)
-    print(f"posizione :",posizione)
-    posizione_scelta(driver,xpath)
+    try:
+        # Prova prima con il primo formato XPath
+        xpath = generate_xpath(posizione_brano,posizione)
+        print(f"Tentativo layout 1, posizione: {posizione}")
+        
+        # Verifica se l'elemento esiste prima di procedere
+        element = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.XPATH, xpath))
+        )
+        posizione_scelta(driver, xpath)
+    except (NoSuchElementException, TimeoutException):
+        # Se il primo formato fallisce, prova con il secondo
+        try:
+            xpath = generate_xpath(posizione_brano2,posizione)
+            print(f"Tentativo layout 2, posizione: {posizione}")
+            posizione_scelta(driver, xpath)
+        except (NoSuchElementException, TimeoutException):
+            print("Nessun elemento trovato con entrambi i layout. Verifica gli XPath.")
+            # Aggiungere qui logica di fallback se necessario
 
 #Carico la pagina web di una playlist
 def scegli_playlist(driver,playlist_scelta):
