@@ -1,6 +1,6 @@
 import random
 
-# Scegli se eseguere una nuova creazione con True, accessi ad account gia creati scritti in account_spotify.csv con False 
+# Scegli se eseguire una nuova creazione con True, accessi ad account gia creati scritti in account_spotify.csv con False 
 CREAZIONE = True
 #scegliere True per usare proxy, False senza.
 PROXY = False
@@ -15,6 +15,8 @@ TIPO_ROUTER = 'vodafone'
 SEGUI_PLAYLIST = True
 #scegliere se ablitare la routine di ascoltare canzoni
 ASCOLTA_CANZONI = True
+#scegliere se disabilitare la protezione stealth e user agent personalizzati
+DISABLE_STEALTH = False
 
 MAX_ITERAZIONE = 100
 #scegliere i profili proxy da ruotare.
@@ -78,4 +80,7 @@ configurazione_bot = {
     
     # Configurazione ascolto canzoni
     'ascolta_canzoni': ASCOLTA_CANZONI,
+    
+    # Configurazione stealth
+    'disable_stealth': DISABLE_STEALTH,
 }

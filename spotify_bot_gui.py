@@ -71,6 +71,7 @@ class SpotifyBotGUI:
         self.tempo_ripartenza_var = None
         self.reset_router_var = None
         self.tipo_router_var = None
+        self.disable_stealth_var = None
         
         # Load saved configuration or use defaults
         self.load_config()
@@ -127,6 +128,7 @@ class SpotifyBotGUI:
         ttk.Checkbutton(config_frame, text="Usa Doppio Proxy", variable=self.doppio_proxy_var).grid(row=2, column=0, sticky=tk.W, pady=2)
         ttk.Checkbutton(config_frame, text="Segui Playlist", variable=self.segui_playlist_var).grid(row=0, column=1, sticky=tk.W, pady=2)
         ttk.Checkbutton(config_frame, text="Ascolta Canzoni", variable=self.ascolta_canzoni_var).grid(row=1, column=1, sticky=tk.W, pady=2)
+        ttk.Checkbutton(config_frame, text="Disabilita Stealth", variable=self.disable_stealth_var).grid(row=2, column=1, sticky=tk.W, pady=2)
         
         # Max Iterations
         iter_frame = ttk.Frame(config_frame)
@@ -257,6 +259,7 @@ class SpotifyBotGUI:
                 self.ascolta_canzoni_var = tk.BooleanVar(value=saved_config.get('ascolta_canzoni', config_module.ASCOLTA_CANZONI))
                 self.stop_for_robot_var = tk.BooleanVar(value=saved_config.get('stop_for_robot', config_module.STOP_FOR_ROBOT))
                 self.reset_router_var = tk.BooleanVar(value=saved_config.get('reset_router', config_module.RESET_ROUTER))
+                self.disable_stealth_var = tk.BooleanVar(value=saved_config.get('disable_stealth', config_module.DISABLE_STEALTH))
                 
                 self.max_iterazioni_var = tk.IntVar(value=saved_config.get('max_iterazioni', config_module.MAX_ITERAZIONE))
                 self.tempo_ripartenza_var = tk.IntVar(value=saved_config.get('tempo_ripartenza', config_module.TEMPO_RIPARTENZA))
@@ -292,6 +295,7 @@ class SpotifyBotGUI:
                 self.ascolta_canzoni_var = tk.BooleanVar(value=config_module.ASCOLTA_CANZONI)
                 self.stop_for_robot_var = tk.BooleanVar(value=config_module.STOP_FOR_ROBOT)
                 self.reset_router_var = tk.BooleanVar(value=config_module.RESET_ROUTER)
+                self.disable_stealth_var = tk.BooleanVar(value=config_module.DISABLE_STEALTH)
                 
                 self.max_iterazioni_var = tk.IntVar(value=config_module.MAX_ITERAZIONE)
                 self.tempo_ripartenza_var = tk.IntVar(value=config_module.TEMPO_RIPARTENZA)
@@ -315,6 +319,7 @@ class SpotifyBotGUI:
             self.ascolta_canzoni_var = tk.BooleanVar(value=config_module.ASCOLTA_CANZONI)
             self.stop_for_robot_var = tk.BooleanVar(value=config_module.STOP_FOR_ROBOT)
             self.reset_router_var = tk.BooleanVar(value=config_module.RESET_ROUTER)
+            self.disable_stealth_var = tk.BooleanVar(value=config_module.DISABLE_STEALTH)
             
             self.max_iterazioni_var = tk.IntVar(value=config_module.MAX_ITERAZIONE)
             self.tempo_ripartenza_var = tk.IntVar(value=config_module.TEMPO_RIPARTENZA)
@@ -336,6 +341,7 @@ class SpotifyBotGUI:
             'ascolta_canzoni': self.ascolta_canzoni_var.get(),
             'stop_for_robot': self.stop_for_robot_var.get(),
             'reset_router': self.reset_router_var.get(),
+            'disable_stealth': self.disable_stealth_var.get(),
             'max_iterazioni': self.max_iterazioni_var.get(),
             'tempo_ripartenza': self.tempo_ripartenza_var.get(),
             'modalita_posizioni': self.modalita_posizioni_var.get(),
@@ -406,6 +412,7 @@ class SpotifyBotGUI:
             'modalita_posizioni': self.modalita_posizioni_var.get(),
             'ascolta_canzoni': self.ascolta_canzoni_var.get(),
             'clean_start': True,  # Flag to indicate a clean start
+            'disable_stealth': self.disable_stealth_var.get()
         }
         
         # Validazione delle configurazioni

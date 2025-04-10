@@ -39,7 +39,7 @@ path_driver = os.path.join(setup_dir, 'path_driver.txt')
 from config import *
 
 #Variabili per il funzionamento
-file = 'account_spotify.csv'       #CSV per eseguire gli accessi agli account              
+file = os.path.join(parent_dir, 'account_spotify.csv')       #CSV per eseguire gli accessi agli account              
 a = 1                              #tempo minimo di attesa negli slepp 
 b = 2                              #tempo massimo di attesa negli slepp
 count = 0                          #sommattore generico
@@ -90,20 +90,28 @@ def change_proxy(config_file_name):
         print(f"Errore durante la configurazione del proxy: {e}")
 
 #Configurazione del browser
-def configurazione_browser(user_agent):
+def configurazione_browser(user_agent, disable_stealth=False):
     chrome_driver_path = leggi_txt(path_driver)  # Path di ChromeDriver dal tuo file
     chrome_binary_path = leggi_txt(path_chrome)  # Path di Chrome.exe dal tuo file
 
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = chrome_binary_path
 
-    # Imposta User-Agent personalizzato
-    chrome_options.add_argument(f"user-agent={user_agent}")
+    # Imposta User-Agent personalizzato se non disabilitato
+    if not disable_stealth:
+        chrome_options.add_argument(f"user-agent={user_agent}")
+        print("[BOT] Utilizzando user agent personalizzato")
+    else:
+        print("[BOT] User agent personalizzato disabilitato")
 
-    # Disabilita automazioni visibili
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option('useAutomationExtension', False)
+    # Disabilita automazioni visibili se non in modalità semplice
+    if not disable_stealth:
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option('useAutomationExtension', False)
+        print("[BOT] Modalità stealth attivata")
+    else:
+        print("[BOT] Modalità stealth disattivata - usando configurazione browser semplice")
     
     # Altri parametri utili
     chrome_options.add_argument("--no-sandbox")
@@ -124,18 +132,20 @@ def configurazione_browser(user_agent):
         # Inizializza il driver
         driver = webdriver.Chrome(service=Service(chrome_driver_path), options=chrome_options)
         
-        # Applica stealth per evitare detection
-        stealth(driver,
-            languages=["en-US", "en"],
-            vendor="Google Inc.",
-            platform="Win32",
-            webgl_vendor="Intel Inc.",
-            renderer="Intel Iris OpenGL Engine",
-            fix_hairline=True
-        )
-    
-        # Nasconde proprietà webdriver
-        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        # Applica stealth per evitare detection (solo se non disabilitato)
+        if not disable_stealth:
+            stealth(driver,
+                languages=["en-US", "en"],
+                vendor="Google Inc.",
+                platform="Win32",
+                webgl_vendor="Intel Inc.",
+                renderer="Intel Iris OpenGL Engine",
+                fix_hairline=True
+            )
+            
+            # Nasconde proprietà webdriver
+            driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+            print("[BOT] Stealth configurato")
     
         print("[BOT] Browser configurato e pronto")
         return driver
@@ -453,26 +463,111 @@ def seguo_playlist(driver, link):
         
 #Accedi ad un account spotify
 def Accesso_spotify(driver,email,password):
-    link_accesso = 'https://open.spotify.com/'
-    driver.get(link_accesso)
-    sleep(randint(2,3))
-    driver.find_element(By.XPATH,'//*[@id="onetrust-accept-btn-handler"]').click()
-    sleep(randint(a,b))           
-    driver.find_element(By.XPATH,'//*[@id="main"]/div/div[2]/div[1]/div[3]/div[1]/button[2]').click()
-    sleep(randint(a,b))
-    driver.find_element(By.XPATH,'//*[@id="login-username"]').send_keys(email)
-    sleep(randint(a,b))
-    driver.find_element(By.XPATH,'//*[@id="login-password"]').send_keys(password)
-    sleep(randint(a,b))
-    driver.find_element(By.XPATH,'//*[@id="login-button"]').click()
-    sleep(randint(4,5))
-    page_text = check_conferma(driver)
-    errore  = "errati" in page_text
-    if errore == False:
-        print("Accesso eseguito correttamente!")
-    else:
-        print("Errore, dati non corretti.")
-    return errore
+    try:
+        print(f"Tentativo di accesso con: {email}")
+        link_accesso = 'https://open.spotify.com/'
+        driver.get(link_accesso)
+        sleep(randint(2,3))
+        
+        # Accetta i cookie se presenti
+        try:
+            cookie_button = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="onetrust-accept-btn-handler"]'))
+            )
+            cookie_button.click()
+            print("Cookie accettati")
+        except (NoSuchElementException, TimeoutException):
+            print("Pulsante cookie non trovato o non cliccabile. Continuo.")
+        
+        sleep(randint(a,b))
+        
+        # Clicca sul bottone di login
+        try:
+            login_button = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="global-nav-bar"]/div[3]/div[1]/div[2]/button[2]'))
+            )
+            login_button.click()
+            print("Cliccato su login")
+        except (NoSuchElementException, TimeoutException) as e:
+            print(f"Errore nel trovare il pulsante di login: {str(e)}")
+            # Prova un XPath alternativo
+            try:
+                alternative_login = WebDriverWait(driver, 5).until(
+                    EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accedi") or contains(text(), "Log in")]'))
+                )
+                alternative_login.click()
+                print("Cliccato su login alternativo")
+            except (NoSuchElementException, TimeoutException) as e:
+                print(f"Anche il login alternativo non funziona: {str(e)}")
+                # Cattura screenshot per debug
+                driver.save_screenshot('login_error.png')
+                return True  # Segnala errore
+        
+        sleep(randint(a,b))
+        
+        # Inserisci email
+        try:
+            username_field = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="login-username"]'))
+            )
+            username_field.clear()
+            username_field.send_keys(email)
+            print("Email inserita")
+        except (NoSuchElementException, TimeoutException) as e:
+            print(f"Errore nel trovare il campo email: {str(e)}")
+            driver.save_screenshot('email_field_error.png')
+            return True
+        
+        driver.find_element(By.XPATH,'//*[@id="login-button"]').click()
+        sleep(randint(a,b))
+        
+        
+        
+        # Inserisci password
+        try:
+            password_field = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="login-password"]'))
+            )
+            password_field.clear()
+            password_field.send_keys(password)
+            print("Password inserita")
+        except (NoSuchElementException, TimeoutException) as e:
+            print(f"Errore nel trovare il campo password: {str(e)}")
+            driver.save_screenshot('password_field_error.png')
+            return True
+        
+        sleep(randint(a,b))
+        
+        # Clicca sul bottone di login finale
+        try:
+            submit_button = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="login-button"]'))
+            )
+            submit_button.click()
+            print("Cliccato su pulsante di invio login")
+        except (NoSuchElementException, TimeoutException) as e:
+            print(f"Errore nel trovare il pulsante di invio: {str(e)}")
+            driver.save_screenshot('submit_button_error.png')
+            return True
+        
+        sleep(randint(4,5))
+        
+        # Verifica se l'accesso è riuscito
+        page_text = check_conferma(driver)
+        errore = "errati" in page_text or "incorrect" in page_text.lower()
+        
+        if not errore:
+            print("Accesso eseguito correttamente!")
+        else:
+            print("Errore, dati non corretti.")
+            driver.save_screenshot('login_failed.png')
+        
+        return errore
+    
+    except Exception as e:
+        print(f"Errore generale durante l'accesso: {str(e)}")
+        driver.save_screenshot('general_error.png')
+        return True
 
 #Ascolto una specifica canzone in una playlit
 def Sento_canzone(driver,posizione):

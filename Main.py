@@ -80,7 +80,7 @@ def esegui_bot_spotify(config):
             
             # Configurazione browser
             user_agent = get_random_user_agent()
-            driver = configurazione_browser(user_agent)
+            driver = configurazione_browser(user_agent, config.get('disable_stealth', False))
 
             # Check for stop event after browser setup
             if stop_event and stop_event.is_set():
