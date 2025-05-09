@@ -8,6 +8,8 @@ import importlib.util
 import ctypes
 import time
 from time import sleep
+import queue
+import concurrent.futures
 
 # Import the existing bot configuration and execution function
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -73,12 +75,18 @@ class SpotifyBotGUI:
         self.tipo_router_var = None
         self.disable_stealth_var = None
         
+        # Variabili per multithreading
+        self.concurrent_bots_var = None
+        self.max_chrome_var = None
+        
         # Load saved configuration or use defaults
         self.load_config()
         
         # Bot Thread
-        self.bot_thread = None
+        self.bot_threads = []
         self.stop_event = threading.Event()
+        self.thread_pool = None
+        self.chrome_semaphore = None
 
         # Create main frame
         self.main_frame = ttk.Frame(master, padding=10)
@@ -135,6 +143,29 @@ class SpotifyBotGUI:
         iter_frame.grid(row=3, column=0, columnspan=2, sticky=tk.W, pady=5)
         ttk.Label(iter_frame, text="Iterazioni Max:").pack(side=tk.LEFT)
         ttk.Entry(iter_frame, textvariable=self.max_iterazioni_var, width=8).pack(side=tk.LEFT, padx=5)
+        
+        # Multithreading Configuration Frame
+        multithreading_frame = ttk.LabelFrame(left_column, text="Configurazione Multithreading", padding=10)
+        multithreading_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        # Bot instances control
+        bot_instances_frame = ttk.Frame(multithreading_frame)
+        bot_instances_frame.pack(fill=tk.X, pady=3)
+        ttk.Label(bot_instances_frame, text="Numero di Bot Simultanei:").pack(side=tk.LEFT)
+        ttk.Spinbox(bot_instances_frame, from_=1, to=10, textvariable=self.concurrent_bots_var, width=5).pack(side=tk.LEFT, padx=5)
+        
+        # Chrome instances control
+        chrome_instances_frame = ttk.Frame(multithreading_frame)
+        chrome_instances_frame.pack(fill=tk.X, pady=3)
+        ttk.Label(chrome_instances_frame, text="Numero Max di Chrome:").pack(side=tk.LEFT)
+        ttk.Spinbox(chrome_instances_frame, from_=1, to=10, textvariable=self.max_chrome_var, width=5).pack(side=tk.LEFT, padx=5)
+        
+        # Info about multithreading
+        info_label = tk.Label(multithreading_frame, 
+                               text="Nota: Il numero di Chrome attivi contemporaneamente non può superare\n"
+                                    "il numero di Bot. Se hai problemi di memoria, riduci questi valori.", 
+                               bg=self.bg_color, fg="#FFA500", justify=tk.LEFT)
+        info_label.pack(anchor='w', pady=(5, 0))
         
         # Position Mode Frame
         position_frame = ttk.LabelFrame(left_column, text="Modalità Posizioni", padding=10)
@@ -284,6 +315,10 @@ class SpotifyBotGUI:
                 self.playlist_urls_var = tk.StringVar(value='\n'.join(playlist_urls))
                 self.playlist_follow_var = tk.StringVar(value='\n'.join(playlist_follow))
                 
+                # Variabili per multithreading
+                self.concurrent_bots_var = tk.IntVar(value=saved_config.get('concurrent_bots', 1))
+                self.max_chrome_var = tk.IntVar(value=saved_config.get('max_chrome', 1))
+                
                 print("Configurazione caricata con successo da", self.config_file)
             else:
                 print("Nessuna configurazione salvata trovata, utilizzando valori predefiniti")
@@ -308,6 +343,10 @@ class SpotifyBotGUI:
                 self.playlist_urls_var = tk.StringVar(value='\n'.join(config_module.PLAYLIST_URLS))
                 self.playlist_follow_var = tk.StringVar(value='\n'.join(config_module.PLAYLIST_FOLLOW))
                 
+                # Variabili per multithreading
+                self.concurrent_bots_var = tk.IntVar(value=1)
+                self.max_chrome_var = tk.IntVar(value=1)
+                
         except Exception as e:
             print(f"Errore durante il caricamento della configurazione: {str(e)}")
             messagebox.showerror("Errore Configurazione", f"Errore durante il caricamento della configurazione: {str(e)}")
@@ -331,6 +370,10 @@ class SpotifyBotGUI:
             self.proxy_list_first_var = tk.StringVar(value='\n'.join(config_module.PROXYLIST))
             self.playlist_urls_var = tk.StringVar(value='\n'.join(config_module.PLAYLIST_URLS))
             self.playlist_follow_var = tk.StringVar(value='\n'.join(config_module.PLAYLIST_FOLLOW))
+            
+            # Variabili per multithreading
+            self.concurrent_bots_var = tk.IntVar(value=1)
+            self.max_chrome_var = tk.IntVar(value=1)
     
     def save_config(self):
         config_data = {
@@ -349,7 +392,9 @@ class SpotifyBotGUI:
             'proxy_list': [x for x in self.proxy_list_var.get().split('\n') if x.strip()],
             'proxy_list_first': [x for x in self.proxy_list_first_var.get().split('\n') if x.strip()],
             'playlist_urls': [x for x in self.playlist_urls_var.get().split('\n') if x.strip()],
-            'playlist_follow': [x for x in self.playlist_follow_var.get().split('\n') if x.strip()]
+            'playlist_follow': [x for x in self.playlist_follow_var.get().split('\n') if x.strip()],
+            'concurrent_bots': self.concurrent_bots_var.get(),
+            'max_chrome': self.max_chrome_var.get()
         }
         
         try:
@@ -386,10 +431,14 @@ class SpotifyBotGUI:
         self.console_text.delete(1.0, tk.END)
         self.console_text.configure(state='disabled')
         
-        self.log_to_console("Avvio del bot in corso...")
+        # Get multithreading settings
+        concurrent_bots = self.concurrent_bots_var.get()
+        max_chrome = min(self.max_chrome_var.get(), concurrent_bots)
+        
+        self.log_to_console(f"Avvio di {concurrent_bots} bot(s) con massimo {max_chrome} istanze Chrome simultanee...")
         
         # Prepare configuration dictionary
-        configurazione_bot = {
+        configurazione_bot_base = {
             'crea_account': self.crea_account_var.get(),
             'max_iterazioni': self.max_iterazioni_var.get(),
             'input_utente': INPUT_UTENTE,
@@ -416,34 +465,60 @@ class SpotifyBotGUI:
         }
         
         # Validazione delle configurazioni
-        if configurazione_bot['usa_proxy'] and configurazione_bot['doppio_proxy']:
-            if not configurazione_bot['proxy_list_first']:
+        if configurazione_bot_base['usa_proxy'] and configurazione_bot_base['doppio_proxy']:
+            if not configurazione_bot_base['proxy_list_first']:
                 messagebox.showwarning("Configurazione Incompleta", 
                     "Hai attivato il doppio proxy ma la lista proxy primaria è vuota!")
                 return
         
-        if configurazione_bot['usa_proxy'] and not configurazione_bot['proxy_list']:
+        if configurazione_bot_base['usa_proxy'] and not configurazione_bot_base['proxy_list']:
             messagebox.showwarning("Configurazione Incompleta", 
                 "Hai attivato l'uso dei proxy ma la lista proxy è vuota!")
             return
         
-        if configurazione_bot['segui_playlist'] and not configurazione_bot['playlist_follow']:
+        if configurazione_bot_base['segui_playlist'] and not configurazione_bot_base['playlist_follow']:
             messagebox.showwarning("Configurazione Incompleta", 
                 "Hai attivato il seguire playlist ma non hai specificato playlist da seguire!")
             return
         
-        if configurazione_bot['ascolta_canzoni'] and not configurazione_bot['playlist_urls']:
+        if configurazione_bot_base['ascolta_canzoni'] and not configurazione_bot_base['playlist_urls']:
             messagebox.showwarning("Configurazione Incompleta", 
                 "Hai attivato l'ascolto delle canzoni ma non hai specificato playlist da ascoltare!")
             return
         
-        # Passa l'evento di stop al bot
-        configurazione_bot['stop_event'] = self.stop_event
-        
-        # Start Bot in a Separate Thread
+        # Crea un evento di stop condiviso e semaforo per limitare le istanze Chrome
         self.stop_event.clear()
-        self.bot_thread = threading.Thread(target=self.run_bot, args=(configurazione_bot,))
-        self.bot_thread.start()
+        self.chrome_semaphore = threading.Semaphore(max_chrome)
+        
+        # Inizializza il thread pool
+        self.thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=concurrent_bots)
+        self.bot_threads = []
+        
+        # Avvia i bot in thread separati
+        for i in range(concurrent_bots):
+            # Copia di configurazione per ciascun bot
+            configurazione_bot = configurazione_bot_base.copy()
+            
+            # Aggiungi identificatore univoco e riferimenti necessari al thread
+            configurazione_bot['bot_id'] = i + 1
+            configurazione_bot['stop_event'] = self.stop_event
+            configurazione_bot['chrome_semaphore'] = self.chrome_semaphore
+            configurazione_bot['gui_instance'] = self
+            
+            # Distribuisci le playlist tra i bot se sono in modalità statica
+            if configurazione_bot['modalita_posizioni'] == 'statico' and i > 0:
+                # Rotazione dell'elenco playlist per una migliore distribuzione
+                shuffled_urls = configurazione_bot['playlist_urls'].copy()
+                random.shuffle(shuffled_urls)
+                configurazione_bot['playlist_urls'] = shuffled_urls
+            
+            # Avvia il thread del bot
+            self.log_to_console(f"Inizializzazione Bot #{i+1}...")
+            bot_thread = self.thread_pool.submit(self.run_bot, configurazione_bot)
+            self.bot_threads.append(bot_thread)
+            
+            # Breve pausa tra l'avvio di ciascun bot per evitare conflitti
+            sleep(0.5)
         
         # Update Button States
         self.start_button['state'] = 'disabled'
@@ -451,35 +526,64 @@ class SpotifyBotGUI:
     
     def run_bot(self, configurazione_bot):
         try:
-            # Add a reference to this instance in configuration
-            configurazione_bot['gui_instance'] = self
+            # Ottieni l'ID del bot per i messaggi di log
+            bot_id = configurazione_bot.get('bot_id', 0)
             
-            # Redirect stdout to console text widget
-            class TextRedirector:
-                def __init__(self, widget, tag="stdout"):
+            # Reindirizza stdout a console text widget con prefisso bot_id
+            class BotTextRedirector:
+                def __init__(self, widget, bot_id=None, tag="stdout"):
                     self.widget = widget
                     self.tag = tag
+                    self.bot_id = bot_id
                 
                 def write(self, str):
-                    self.widget.configure(state='normal')
-                    self.widget.insert(tk.END, str)
-                    self.widget.see(tk.END)
-                    self.widget.configure(state='disabled')
+                    if str.strip():  # Evita linee vuote
+                        # Aggiungi prefisso solo se il messaggio non è vuoto
+                        prefix = f"[Bot #{self.bot_id}] " if self.bot_id else ""
+                        self.widget.configure(state='normal')
+                        self.widget.insert(tk.END, prefix + str)
+                        self.widget.see(tk.END)
+                        self.widget.configure(state='disabled')
                 
                 def flush(self):
                     pass
             
-            sys.stdout = TextRedirector(self.console_text)
-            sys.stderr = TextRedirector(self.console_text, "stderr")
+            # Crea un oggetto redirezione specifico per questo bot
+            bot_stdout = BotTextRedirector(self.console_text, bot_id)
             
-            # Run the bot
-            esegui_bot_spotify(configurazione_bot)
+            # Acquisisci il semaforo per Chrome prima di eseguire il bot
+            chrome_semaphore = configurazione_bot.get('chrome_semaphore')
+            if chrome_semaphore:
+                bot_stdout.write(f"In attesa di una posizione disponibile nel pool Chrome ({self.max_chrome_var.get()} max)...\n")
+                chrome_semaphore.acquire()
+                bot_stdout.write("Posizione Chrome acquisita, avvio del bot!\n")
+            
+            try:
+                # Reindirizza temporaneamente l'output
+                old_stdout = sys.stdout
+                old_stderr = sys.stderr
+                sys.stdout = bot_stdout
+                sys.stderr = bot_stdout
+                
+                # Esegui il bot con la configurazione specifica
+                esegui_bot_spotify(configurazione_bot)
+            
+            finally:
+                # Ripristina stdout e rilascia il semaforo
+                sys.stdout = old_stdout
+                sys.stderr = old_stderr
+                if chrome_semaphore:
+                    chrome_semaphore.release()
+                    # Messaggio di rilascio del semaforo (usando la versione salvata di stdout)
+                    bot_stdout.write("Istanza Chrome rilasciata, ora disponibile per altri bot.\n")
         
         except Exception as e:
-            messagebox.showerror("Errore Bot", str(e))
-        finally:
-            # Reset UI
-            self.master.after(0, self.reset_ui)
+            error_msg = f"Errore Bot #{bot_id}: {str(e)}"
+            self.log_to_console(error_msg)
+            print(error_msg)  # Stampa anche nella console di sistema per debug
+        
+        # Non chiamare reset_ui qui, poiché potrebbe essere chiamato da ogni thread
+        # e causare il ripristino dell'UI mentre altri thread sono ancora in esecuzione
     
     def stop_bot(self):
         """
