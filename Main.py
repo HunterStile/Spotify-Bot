@@ -4,6 +4,10 @@ from funzioni.spotify_functions import *
 from config import *
 import re
 import os
+from dotenv import load_dotenv
+
+# Carica le variabili d'ambiente dal file .env
+load_dotenv()
 
 def parse_playlist_config(playlist_urls):
     """
@@ -97,7 +101,9 @@ def esegui_bot_spotify(config):
                     config.get('doppio_proxy', False), 
                     config.get('stop_for_robot', False),
                     proxy_list=config.get('proxy_list', []),
-                    proxy_list_first=config.get('proxy_list_first', []) if config.get('doppio_proxy', False) else None
+                    proxy_list_first=config.get('proxy_list_first', []) if config.get('doppio_proxy', False) else None,
+                    use_captcha_service=config.get('USE_CAPTCHA_SERVICE', True),
+                    captcha_service=config.get('CAPTCHA_SERVICE', '2captcha')
                 )
                 
                 # Check for stop event after account creation

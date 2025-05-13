@@ -11,12 +11,15 @@ TEMPO_RIPARTENZA = 7200
 #Gestione del reset
 RESET_ROUTER = False
 TIPO_ROUTER = 'vodafone'
+#Opzioni per la risoluzione automatica dei CAPTCHA
+USE_CAPTCHA_SERVICE = True  # Imposta a True per usare servizi esterni per risolvere i CAPTCHA
+CAPTCHA_SERVICE = '2captcha'  # Opzioni: '2captcha', 'anticaptcha', 'capsolver'
 #scegliere se abilitare la routine di seguire le playlist
 SEGUI_PLAYLIST = True
 #scegliere se ablitare la routine di ascoltare canzoni
 ASCOLTA_CANZONI = True
 #scegliere se disabilitare la protezione stealth e user agent personalizzati
-DISABLE_STEALTH = False
+DISABLE_STEALTH = True
 
 MAX_ITERAZIONE = 100
 #scegliere i profili proxy da ruotare.
@@ -83,4 +86,8 @@ configurazione_bot = {
     
     # Configurazione stealth
     'disable_stealth': DISABLE_STEALTH,
+    
+    # Configurazione CAPTCHA
+    'use_captcha_service': USE_CAPTCHA_SERVICE,
+    'captcha_service': CAPTCHA_SERVICE,
 }
