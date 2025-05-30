@@ -85,12 +85,13 @@ class SpotifyBotGUI:
         self.proxy_list_var = None
         self.proxy_list_first_var = None
         self.playlist_urls_var = None
-        self.playlist_follow_var = None
+        self.playlist_follow_var = None        
         self.stop_for_robot_var = None
         self.tempo_ripartenza_var = None
         self.reset_router_var = None
         self.tipo_router_var = None
         self.disable_stealth_var = None
+        self.secondo_schermo_var = None
         
         # Variabili per multithreading
         self.concurrent_bots_var = None
@@ -146,18 +147,17 @@ class SpotifyBotGUI:
         # Main Configuration Frame
         config_frame = ttk.LabelFrame(left_column, text="Configurazione Principale", padding=10)
         config_frame.pack(fill=tk.X, pady=(0, 10))
-        
-        # Use a grid layout for better alignment
+          # Use a grid layout for better alignment
         ttk.Checkbutton(config_frame, text="Crea Nuovo Account", variable=self.crea_account_var).grid(row=0, column=0, sticky=tk.W, pady=2)
         ttk.Checkbutton(config_frame, text="Usa Proxy", variable=self.proxy_var).grid(row=1, column=0, sticky=tk.W, pady=2)
         ttk.Checkbutton(config_frame, text="Usa Doppio Proxy", variable=self.doppio_proxy_var).grid(row=2, column=0, sticky=tk.W, pady=2)
         ttk.Checkbutton(config_frame, text="Segui Playlist", variable=self.segui_playlist_var).grid(row=0, column=1, sticky=tk.W, pady=2)
         ttk.Checkbutton(config_frame, text="Ascolta Canzoni", variable=self.ascolta_canzoni_var).grid(row=1, column=1, sticky=tk.W, pady=2)
         ttk.Checkbutton(config_frame, text="Disabilita Stealth", variable=self.disable_stealth_var).grid(row=2, column=1, sticky=tk.W, pady=2)
-        
-        # Max Iterations
+        ttk.Checkbutton(config_frame, text="Usa Secondo Schermo", variable=self.secondo_schermo_var).grid(row=3, column=1, sticky=tk.W, pady=2)
+          # Max Iterations
         iter_frame = ttk.Frame(config_frame)
-        iter_frame.grid(row=3, column=0, columnspan=2, sticky=tk.W, pady=5)
+        iter_frame.grid(row=4, column=0, columnspan=2, sticky=tk.W, pady=5)
         ttk.Label(iter_frame, text="Iterazioni Max:").pack(side=tk.LEFT)
         ttk.Entry(iter_frame, textvariable=self.max_iterazioni_var, width=8).pack(side=tk.LEFT, padx=5)
         
@@ -278,6 +278,10 @@ class SpotifyBotGUI:
         save_button = ttk.Button(button_frame, text="Salva Configurazione", command=self.save_config, width=20)
         save_button.pack(side=tk.LEFT, padx=10)
         
+        # Pulsante per aggiornare ChromeDriver
+        update_driver_button = ttk.Button(button_frame, text="Aggiorna ChromeDriver", command=self.update_chromedriver, width=18)
+        update_driver_button.pack(side=tk.LEFT, padx=10)
+        
         # Console Output
         console_frame = ttk.LabelFrame(self.main_frame, text="Console Output", padding=10)
         console_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
@@ -305,9 +309,10 @@ class SpotifyBotGUI:
                 self.doppio_proxy_var = tk.BooleanVar(value=saved_config.get('doppio_proxy', config_module.DOPPIOPROXY))
                 self.segui_playlist_var = tk.BooleanVar(value=saved_config.get('segui_playlist', config_module.SEGUI_PLAYLIST))
                 self.ascolta_canzoni_var = tk.BooleanVar(value=saved_config.get('ascolta_canzoni', config_module.ASCOLTA_CANZONI))
-                self.stop_for_robot_var = tk.BooleanVar(value=saved_config.get('stop_for_robot', config_module.STOP_FOR_ROBOT))
+                self.stop_for_robot_var = tk.BooleanVar(value=saved_config.get('stop_for_robot', config_module.STOP_FOR_ROBOT))                
                 self.reset_router_var = tk.BooleanVar(value=saved_config.get('reset_router', config_module.RESET_ROUTER))
                 self.disable_stealth_var = tk.BooleanVar(value=saved_config.get('disable_stealth', config_module.DISABLE_STEALTH))
+                self.secondo_schermo_var = tk.BooleanVar(value=saved_config.get('secondo_schermo', False))
                 
                 self.max_iterazioni_var = tk.IntVar(value=saved_config.get('max_iterazioni', config_module.MAX_ITERAZIONE))
                 self.tempo_ripartenza_var = tk.IntVar(value=saved_config.get('tempo_ripartenza', config_module.TEMPO_RIPARTENZA))
@@ -376,6 +381,7 @@ class SpotifyBotGUI:
             self.stop_for_robot_var = tk.BooleanVar(value=config_module.STOP_FOR_ROBOT)
             self.reset_router_var = tk.BooleanVar(value=config_module.RESET_ROUTER)
             self.disable_stealth_var = tk.BooleanVar(value=config_module.DISABLE_STEALTH)
+            self.secondo_schermo_var = tk.BooleanVar(value=False)
             
             self.max_iterazioni_var = tk.IntVar(value=config_module.MAX_ITERAZIONE)
             self.tempo_ripartenza_var = tk.IntVar(value=config_module.TEMPO_RIPARTENZA)
@@ -399,9 +405,9 @@ class SpotifyBotGUI:
             'doppio_proxy': self.doppio_proxy_var.get(),
             'segui_playlist': self.segui_playlist_var.get(),
             'ascolta_canzoni': self.ascolta_canzoni_var.get(),
-            'stop_for_robot': self.stop_for_robot_var.get(),
-            'reset_router': self.reset_router_var.get(),
+            'stop_for_robot': self.stop_for_robot_var.get(),            'reset_router': self.reset_router_var.get(),
             'disable_stealth': self.disable_stealth_var.get(),
+            'secondo_schermo': self.secondo_schermo_var.get(),
             'max_iterazioni': self.max_iterazioni_var.get(),
             'tempo_ripartenza': self.tempo_ripartenza_var.get(),
             'modalita_posizioni': self.modalita_posizioni_var.get(),
@@ -430,6 +436,54 @@ class SpotifyBotGUI:
         self.console_text.see(tk.END)
         self.console_text.configure(state='disabled')
 
+    def update_chromedriver(self):
+        """Aggiorna ChromeDriver alla versione più recente"""
+        try:
+            # Importa le funzioni necessarie
+            from funzioni.spotify_functions import aggiorna_chromedriver, get_chrome_version
+            
+            # Mostra messaggio di inizio
+            self.log_to_console("Controllo della versione di Chrome installata...")
+            
+            # Controlla la versione di Chrome
+            chrome_version = get_chrome_version()
+            if chrome_version:
+                self.log_to_console(f"Chrome versione rilevata: {chrome_version}")
+            else:
+                self.log_to_console("Impossibile rilevare la versione di Chrome, procedo comunque...")
+            
+            # Avvia aggiornamento in un thread separato per non bloccare la GUI
+            def update_in_thread():
+                try:
+                    self.log_to_console("Avvio aggiornamento ChromeDriver...")
+                    success = aggiorna_chromedriver()
+                    
+                    if success:
+                        self.log_to_console("✓ ChromeDriver aggiornato con successo!")
+                        messagebox.showinfo("Aggiornamento Completato", 
+                                          "ChromeDriver è stato aggiornato alla versione più recente.")
+                    else:
+                        self.log_to_console("✗ Errore durante l'aggiornamento di ChromeDriver.")
+                        messagebox.showerror("Errore Aggiornamento", 
+                                           "Si è verificato un errore durante l'aggiornamento di ChromeDriver.")
+                except Exception as e:
+                    error_msg = f"Errore durante l'aggiornamento: {str(e)}"
+                    self.log_to_console(f"✗ {error_msg}")
+                    messagebox.showerror("Errore", error_msg)
+            
+            # Esegui l'aggiornamento in un thread separato
+            update_thread = threading.Thread(target=update_in_thread, daemon=True)
+            update_thread.start()
+            
+        except ImportError as e:
+            error_msg = f"Errore nell'importazione delle funzioni: {str(e)}"
+            self.log_to_console(error_msg)
+            messagebox.showerror("Errore", error_msg)
+        except Exception as e:
+            error_msg = f"Errore inaspettato: {str(e)}"
+            self.log_to_console(error_msg)
+            messagebox.showerror("Errore", error_msg)
+    
     def start_bot(self):
         # Save configuration before starting the bot
         self.save_config()
@@ -475,10 +529,10 @@ class SpotifyBotGUI:
             'playlist_urls': [x.strip() for x in self.playlist_urls_var.get().split('\n') if x.strip()],
             'playlist_follow': [x.strip() for x in self.playlist_follow_var.get().split('\n') if x.strip()],
             
-            'modalita_posizioni': self.modalita_posizioni_var.get(),
-            'ascolta_canzoni': self.ascolta_canzoni_var.get(),
+            'modalita_posizioni': self.modalita_posizioni_var.get(),            'ascolta_canzoni': self.ascolta_canzoni_var.get(),
             'clean_start': True,  # Flag to indicate a clean start
-            'disable_stealth': self.disable_stealth_var.get()
+            'disable_stealth': self.disable_stealth_var.get(),
+            'secondo_schermo': self.secondo_schermo_var.get()
         }
         
         # Validazione delle configurazioni

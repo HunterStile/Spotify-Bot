@@ -77,10 +77,9 @@ def esegui_bot_spotify(config):
                     change_proxy(config_file_name)
                 else:
                     print("Attenzione: Lista proxy vuota!")
-            
-            # Configurazione browser
+              # Configurazione browser
             user_agent = get_random_user_agent()
-            driver = configurazione_browser(user_agent, config.get('disable_stealth', False))
+            driver = configurazione_browser(user_agent, config.get('disable_stealth', False), config.get('secondo_schermo', False))
 
             # Check for stop event after browser setup
             if stop_event and stop_event.is_set():

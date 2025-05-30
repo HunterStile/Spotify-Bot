@@ -14,8 +14,8 @@ a = Analysis(
         ('gui_config.json', '.'),
         ('account_spotify.csv', '.'),
         ('account_spotify_creati.csv', '.'),
-    ],
-    hiddenimports=[
+        ('C:\\Python312\\Lib\\site-packages\\selenium_stealth\\js', 'selenium_stealth/js'),
+    ],hiddenimports=[
         'selenium',
         'selenium.webdriver',
         'selenium.webdriver.chrome',
@@ -24,6 +24,8 @@ a = Analysis(
         'selenium.webdriver.support.expected_conditions',
         'selenium.webdriver.common.action_chains',
         'selenium.common.exceptions',
+        'selenium_stealth',
+        'selenium_stealth.stealth',
         'webdriver_manager',
         'webdriver_manager.chrome',
         'faker',

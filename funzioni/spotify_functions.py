@@ -105,12 +105,40 @@ def change_proxy(config_file_name):
         print(f"Errore durante la configurazione del proxy: {e}")
 
 #Configurazione del browser
-def configurazione_browser(user_agent, disable_stealth=False):
-    chrome_driver_path = leggi_txt(path_driver)  # Path di ChromeDriver dal tuo file
-    chrome_binary_path = leggi_txt(path_chrome)  # Path di Chrome.exe dal tuo file
+def configurazione_browser(user_agent, disable_stealth=False, secondo_schermo=False):
+    # Usa webdriver-manager per gestire automaticamente ChromeDriver
+    # Questo scarica e gestisce automaticamente la versione corretta
+    try:
+        # ChromeDriverManager scarica automaticamente la versione giusta
+        service = Service(ChromeDriverManager().install())
+        print("[BOT] ChromeDriver configurato automaticamente")
+    except Exception as e:
+        print(f"[BOT] Errore con webdriver-manager, provo con percorsi locali: {e}")
+        # Fallback ai percorsi locali se webdriver-manager fallisce
+        try:
+            chrome_driver_path = leggi_txt(get_resource_path("funzioni/Setup/path_driver.txt"))
+            service = Service(chrome_driver_path)
+            print(f"[BOT] Usando ChromeDriver locale: {chrome_driver_path}")
+        except:
+            # Ultimo fallback: usa chromedriver nella stessa cartella dell'exe
+            chrome_driver_path = get_resource_path("chromedriver.exe")
+            service = Service(chrome_driver_path)
+            print(f"[BOT] Usando ChromeDriver integrato: {chrome_driver_path}")
 
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = chrome_binary_path
+    
+    # Rileva automaticamente Chrome invece di usare percorso fisso
+    # Chrome viene rilevato automaticamente da Selenium nella maggior parte dei casi
+    # Se necessario, può essere specificato manualmente
+    try:
+        chrome_binary_path = leggi_txt(get_resource_path("funzioni/Setup/path_chrome.txt"))
+        if chrome_binary_path and os.path.exists(chrome_binary_path):
+            chrome_options.binary_location = chrome_binary_path
+            print(f"[BOT] Usando Chrome personalizzato: {chrome_binary_path}")
+        else:
+            print("[BOT] Chrome verrà rilevato automaticamente")
+    except:
+        print("[BOT] Chrome verrà rilevato automaticamente")
 
     # Imposta User-Agent personalizzato se non disabilitato
     if not disable_stealth:
@@ -135,17 +163,22 @@ def configurazione_browser(user_agent, disable_stealth=False):
     
     # Clean session options (nuovi parametri per avvio pulito)
     chrome_options.add_argument("--incognito")  # Usa modalità incognito per evitare conflitti di sessione
-    chrome_options.add_argument("--disable-application-cache")  # Disabilita cache
-    chrome_options.add_argument("--disable-session-crashed-bubble")  # Disabilita segnalazione crash
+    chrome_options.add_argument("--disable-application-cache")  # Disabilita cache    chrome_options.add_argument("--disable-session-crashed-bubble")  # Disabilita segnalazione crash
     chrome_options.add_argument("--disable-restore-session-state")  # Previene ripristino sessione
     
-    # Imposta la posizione della finestra se vuoi su secondo monitor
-    chrome_options.add_argument("window-position=1920,0")
-    chrome_options.add_argument("start-maximized")
+    # Imposta la posizione della finestra in base alla scelta dell'utente
+    if secondo_schermo:
+        chrome_options.add_argument("--window-position=1920,0")  # Secondo schermo (standard 1920px)
+        print("[BOT] Browser configurato per secondo schermo")
+    else:
+        chrome_options.add_argument("--window-position=0,0")  # Primo schermo
+        print("[BOT] Browser configurato per primo schermo")
+    
+    chrome_options.add_argument("--start-maximized")
 
     try:
-        # Inizializza il driver
-        driver = webdriver.Chrome(service=Service(chrome_driver_path), options=chrome_options)
+        # Inizializza il driver con il service configurato
+        driver = webdriver.Chrome(service=service, options=chrome_options)
         
         # Applica stealth per evitare detection (solo se non disabilitato)
         if not disable_stealth:
@@ -157,21 +190,24 @@ def configurazione_browser(user_agent, disable_stealth=False):
                 renderer="Intel Iris OpenGL Engine",
                 fix_hairline=True
             )
-            
-            # Nasconde proprietà webdriver
+              # Nasconde proprietà webdriver
             driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
             print("[BOT] Stealth configurato")
-    
+        
         print("[BOT] Browser configurato e pronto")
         return driver
     except Exception as e:
         print(f"Errore durante la configurazione del browser: {str(e)}")
-        # In caso di errore, prova una configurazione più semplice
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--disable-extensions")
-        driver = webdriver.Chrome(service=Service(chrome_driver_path), options=chrome_options)
-        print("[BOT] Browser configurato con opzioni di fallback")
-        return driver
+        try:
+            # In caso di errore, prova una configurazione più semplice
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--disable-extensions")
+            driver = webdriver.Chrome(service=service, options=chrome_options)
+            print("[BOT] Browser configurato con opzioni di fallback")
+            return driver
+        except Exception as e2:
+            print(f"Errore critico nella configurazione del browser: {str(e2)}")
+            return None
 
 # Funzione per scegliere user-agent random
 def get_random_user_agent():
@@ -339,7 +375,7 @@ def crea_account(driver, proxy, stop_for_robot, proxy_list=None, proxy_list_firs
     nickname = random.choice(nomi)
     anno=randint(1996,2005)
     mese=random.choice(mesi)
-    giorno=randint(1,29)
+    giorno=randint(1,29)    
     password = 'Napoli10!!'
     sceltasesso = ['M','F','F']
     sesso = random.choice(sceltasesso)
@@ -666,6 +702,58 @@ def posizione_scelta(driver,posizione):
     except Exception as e:
         print(f"Errore durante il clic: {str(e)}")
         sleep(randint(120, 160))
+
+# Funzione per aggiornare ChromeDriver
+def aggiorna_chromedriver():
+    """
+    Forza il download della versione più recente di ChromeDriver
+    usando webdriver-manager
+    """
+    try:
+        print("[BOT] Aggiornamento ChromeDriver in corso...")
+        # Forza il download della versione più recente
+        manager = ChromeDriverManager()
+        latest_driver = manager.install()
+        print(f"[BOT] ChromeDriver aggiornato con successo: {latest_driver}")
+        return True
+    except Exception as e:
+        print(f"[BOT] Errore durante l'aggiornamento di ChromeDriver: {e}")
+        return False
+
+# Funzione per controllare la versione di Chrome
+def get_chrome_version():
+    """
+    Ottiene la versione di Chrome installata sul sistema
+    """
+    try:
+        import subprocess
+        import re
+        
+        # Comandi per ottenere la versione di Chrome su Windows
+        commands = [
+            'reg query "HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon" /v version',
+            'reg query "HKLM\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Google Chrome" /v version',
+            'wmic datafile where name="C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe" get Version'
+        ]
+        
+        for cmd in commands:
+            try:
+                result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+                if result.returncode == 0:
+                    # Cerca pattern versione
+                    version_match = re.search(r'(\d+\.\d+\.\d+\.\d+)', result.stdout)
+                    if version_match:
+                        version = version_match.group(1)
+                        print(f"[BOT] Chrome versione rilevata: {version}")
+                        return version
+            except:
+                continue
+                
+        print("[BOT] Non riesco a rilevare la versione di Chrome")
+        return None
+    except Exception as e:
+        print(f"[BOT] Errore nel rilevamento versione Chrome: {e}")
+        return None
 
 
 
