@@ -11,11 +11,28 @@ from time import sleep
 import queue
 import concurrent.futures
 
+# Funzione per gestire i percorsi in PyInstaller
+def get_resource_path(relative_path):
+    """Ottiene il percorso assoluto per i file risorsa, funziona sia in dev che in exe"""
+    try:
+        # PyInstaller crea una cartella temporanea e memorizza il percorso in _MEIPASS
+        base_path = sys._MEIPASS
+    except AttributeError:
+        # Percorso normale quando non è in un eseguibile
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, relative_path)
+
 # Import the existing bot configuration and execution function
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-spec = importlib.util.spec_from_file_location("config", "config.py")
+
+# Carica config.py usando il percorso corretto
+config_path = get_resource_path("config.py")
+spec = importlib.util.spec_from_file_location("config", config_path)
 config_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(config_module)
+
+# Aggiungi il percorso base al sys.path per gli import
+sys.path.insert(0, get_resource_path('.'))
 
 from Main import *
 from config import *

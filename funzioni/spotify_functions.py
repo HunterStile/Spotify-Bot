@@ -20,6 +20,21 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 import sys
 import os
+
+# Funzione per gestire i percorsi in PyInstaller
+def get_resource_path(relative_path):
+    """Ottiene il percorso assoluto per i file risorsa, funziona sia in dev che in exe"""
+    try:
+        # PyInstaller crea una cartella temporanea e memorizza il percorso in _MEIPASS
+        base_path = sys._MEIPASS
+    except AttributeError:
+        # Percorso normale quando non è in un eseguibile
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        # Se siamo nella cartella funzioni, andiamo una directory sopra
+        if os.path.basename(base_path) == 'funzioni':
+            base_path = os.path.dirname(base_path)
+    return os.path.join(base_path, relative_path)
+import os
 import subprocess
 import pyautogui
 from dotenv import load_dotenv
@@ -160,7 +175,8 @@ def configurazione_browser(user_agent, disable_stealth=False):
 
 # Funzione per scegliere user-agent random
 def get_random_user_agent():
-    with open("user_agents.txt", "r") as file:
+    user_agents_path = get_resource_path("user_agents.txt")
+    with open(user_agents_path, "r") as file:
         agents = file.readlines()
     return random.choice(agents).strip()
 
@@ -206,7 +222,8 @@ def check_conferma(driver):
 #Legge un txt
 def leggi_txt(nome_file):
     try:
-        with open(nome_file, 'r') as file:
+        file_path = get_resource_path(nome_file)
+        with open(file_path, 'r') as file:
             prima_riga = file.readline().strip()  # Legge la prima riga e rimuove eventuali spazi bianchi iniziali/finali
             return prima_riga
     except FileNotFoundError:
@@ -431,15 +448,14 @@ def crea_account(driver, proxy, stop_for_robot, proxy_list=None, proxy_list_firs
     page_text = check_conferma(driver)
     creato = "Scarica" in page_text
     if creato == True:
-        print("Account Creato!")
-
-        # Dati da inserire nel file CSV
+        print("Account Creato!")        # Dati da inserire nel file CSV
         new_rows = [
             [email, password]
         ]
 
         # Apri il file CSV in modalità append
-        with open('account_spotify_creati.csv', 'a', newline='') as csvfile:
+        csv_path = get_resource_path('account_spotify_creati.csv')
+        with open(csv_path, 'a', newline='') as csvfile:
             # Scrivi i dati nel file CSV
             csvwriter = csv.writer(csvfile, delimiter=',')
             for row in new_rows:

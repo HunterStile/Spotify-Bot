@@ -59,3 +59,5 @@ Il Spotify-Bot è destinato esclusivamente a scopi informativi ed educativi. L'u
 Utilizzando questo bot, accetti di esonerare gli sviluppatori del bot da qualsiasi responsabilità derivante dall'uso del bot stesso.
 
 Se hai dubbi riguardo all'uso legale del bot o se hai domande sui tuoi diritti e doveri, ti consigliamo di consultare un legale.
+
+pyinstaller --clean spotify_bot.spec
