@@ -9,18 +9,11 @@
 ## 📁 STRUTTURA DISTRIBUZIONE
 ```
 SpotifyBot_Distribution/
-├── SpotifyBot.exe          # Applicazione COMPLETA e AUTONOMA
+├── SpotifyBot.exe          # Applicazione principale
+├── chromedriver.exe        # Driver per Chrome
+├── user_agents.txt         # User agents per stealth mode
 └── README.txt             # Istruzioni per l'utente
 ```
-
-**IMPORTANTE:** A partire dalla versione 1.2.1, l'eseguibile include TUTTO automaticamente:
-- ✅ chromedriver.exe (incluso nell'exe)
-- ✅ user_agents.txt (incluso nell'exe) 
-- ✅ config.py (incluso nell'exe)
-- ✅ Tutte le funzioni Python (incluse nell'exe)
-- ✅ File CSV per account (inclusi nell'exe)
-
-**Non serve più copiare file esterni!**
 
 ## 🛠️ METODI PER CREARE L'EXE
 
