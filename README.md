@@ -39,6 +39,18 @@
 ## 🚀 Quick Start
 
 ### 1️⃣ **Installazione**
+
+#### **Opzione A: Eseguibile Standalone** ⭐ *Consigliato*
+```bash
+# Scarica la release
+1. Vai su GitHub Releases
+2. Scarica dist.zip
+3. Estrai i file
+4. Esegui spotifybot.exe
+```
+> **💡 Nessuna installazione Python richiesta!**
+
+#### **Opzione B: Da Codice Sorgente**
 ```bash
 # Clona il repository
 git clone https://github.com/HunterStile/Spotify-Bot.git
@@ -49,6 +61,14 @@ pip install -r requirements.txt
 ```
 
 ### 2️⃣ **Avvio Rapido**
+
+#### **Con Eseguibile**
+```bash
+# Esegui l'eseguibile standalone
+./spotifybot.exe
+```
+
+#### **Con Python**
 ```bash
 # Esegui l'interfaccia grafica
 python spotify_bot_gui.py
