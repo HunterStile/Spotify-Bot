@@ -626,6 +626,9 @@ def Accesso_spotify(driver,email,password):
         driver.find_element(By.XPATH,'//*[@id="login-button"]').click()
         sleep(randint(a,b))
         
+        # Clicca sul bottone di "accedi con password"
+        driver.find_element(By.XPATH,'//*[@id="encore-web-main-content"]/div[2]/div/div/div/form/div[2]/section/button').click()
+        sleep(randint(a,b))
         
         
         # Inserisci password
