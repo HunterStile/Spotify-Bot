@@ -14,7 +14,7 @@
 ---
 
 ## 🆕 VERSIONE 1.2.1 - MAC ADDRESS SPOOFING
-**📅 Data di rilascio**: Giugno 2025  
+**📅 Data di rilascio**: 08/06/2025  
 **🏷️ Tipo**: Minor Update - Advanced Anti-Detection
 
 ### ✨ **NUOVE FUNZIONALITÀ**

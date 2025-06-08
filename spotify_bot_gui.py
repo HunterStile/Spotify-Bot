@@ -130,7 +130,7 @@ class SpotifyBotGUI:
         # Add a small Spotify-like icon or separator here if desired
         
         # Version info
-        version_label = tk.Label(header_frame, text="v1.2.0", 
+        version_label = tk.Label(header_frame, text="v1.2.1", 
                                bg=self.bg_color, fg=self.text_color)
         version_label.pack(side=tk.RIGHT)
 

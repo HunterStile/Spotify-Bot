@@ -43,25 +43,42 @@ PROXY:
 Formato: ip:porta:username:password
 Oppure: ip:porta (se senza autenticazione)
 
-===============================================
-MULTITHREADING:
-===============================================
-
-- Numero di Bot Simultanei: Quanti bot far girare in parallelo
-- Numero Max di Chrome: Limite di istanze Chrome attive
-- Attenzione: troppi bot possono rallentare il computer
 
 ===============================================
-SUPPORTO:
+PATCH NOTES:
 ===============================================
 
-Versione: 1.2.1
-Data build: $(Get-Date)
+# 🆕 VERSIONE 1.2.1 - MAC ADDRESS SPOOFING
+**📅 Data di rilascio**: 08/06/2025  
+**🏷️ Tipo**: Minor Update - Advanced Anti-Detection
 
-Per supporto o problemi, verifica:
-1. Chrome è installato e aggiornato
-2. Connessione internet funzionante
-3. Credenziali Spotify valide
-4. Proxy configurati correttamente (se usati)
+### ✨ **NUOVE FUNZIONALITÀ**
+
+#### 🔧 **Sistema Reset MAC Address Avanzato**
+- **Reset MAC Automatico**: Cambio automatico MAC address durante rilevamento robot/CAPTCHA
+- **Metodi Multipli**: Fallback automatico tra PowerShell e Netsh per massima compatibilità
+- **Vendor Prefix Realistici**: Utilizzo prefissi reali (Intel, Microsoft, VirtualBox, VMware)
+- **Verifica Privilegi Admin**: Controllo automatico permessi amministratore
+- **Logging Dettagliato**: Output completo operazioni MAC per debugging
+
+#### 🎮 **Integrazione GUI Completa**
+- **Checkbox "Reset MAC"**: Nuova opzione nel Router Reset Frame
+- **Configurazione Persistente**: Salvataggio impostazione reset MAC in `gui_config.json`
+- **Workflow Integrato**: Reset MAC + Reset Router per massima efficacia anti-detection
+- **Controlli Pre-Volo**: Validazione configurazioni MAC prima dell'avvio
+
+### 🔧 **MIGLIORAMENTI TECNICI**
+
+#### 🛡️ **Anti-Detection Potenziato**
+- **Hardware Fingerprinting**: Mascheramento completo identità hardware
+- **Network Layer Evasion**: Cambio MAC a livello network adapter
+- **Randomizzazione Intelligente**: Generazione MAC con pattern realistici
+- **Fallback Robusto**: Sistema doppio per gestire diverse configurazioni Windows
+
+#### ⚙️ **Architettura Modulare**
+- **MacChanger Class**: Classe dedicata con metodi PowerShell e Netsh
+- **Compatibility Functions**: Funzioni di compatibilità per integrazione esistente
+- **Error Handling**: Gestione robusta errori con retry automatici
+- **Admin Detection**: Rilevamento automatico privilegi tramite ctypes
 
 ===============================================
