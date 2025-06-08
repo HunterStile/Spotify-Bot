@@ -73,8 +73,7 @@ class SpotifyBotGUI:
         
         # Config file path
         self.config_file = "gui_config.json"
-        
-        # Initialize variables with None first
+          # Initialize variables with None first
         self.crea_account_var = None
         self.proxy_var = None
         self.doppio_proxy_var = None
@@ -85,11 +84,12 @@ class SpotifyBotGUI:
         self.proxy_list_var = None
         self.proxy_list_first_var = None
         self.playlist_urls_var = None
-        self.playlist_follow_var = None        
+        self.playlist_follow_var = None
         self.stop_for_robot_var = None
         self.tempo_ripartenza_var = None
         self.reset_router_var = None
         self.tipo_router_var = None
+        self.reset_mac_var = None
         self.disable_stealth_var = None
         self.secondo_schermo_var = None
         
@@ -200,12 +200,12 @@ class SpotifyBotGUI:
         
         ttk.Label(robot_frame, text="Tempo di Ripartenza (sec):").grid(row=1, column=0, sticky=tk.W, pady=2)
         ttk.Entry(robot_frame, textvariable=self.tempo_ripartenza_var, width=8).grid(row=1, column=1, sticky=tk.W, pady=2)
-        
-        # Router Reset Frame
+          # Router Reset Frame
         router_frame = ttk.LabelFrame(left_column, text="Reset Router", padding=10)
         router_frame.pack(fill=tk.X, pady=(0, 10))
         
         ttk.Checkbutton(router_frame, text="Reset Router", variable=self.reset_router_var).grid(row=0, column=0, sticky=tk.W, pady=2)
+        ttk.Checkbutton(router_frame, text="Reset MAC", variable=self.reset_mac_var).grid(row=0, column=1, sticky=tk.W, pady=2)
         
         ttk.Label(router_frame, text="Tipo Router:").grid(row=1, column=0, sticky=tk.W, pady=2)
         ttk.Radiobutton(router_frame, text="TIM", variable=self.tipo_router_var, value='tim').grid(row=1, column=1, sticky=tk.W, pady=2)
@@ -309,8 +309,9 @@ class SpotifyBotGUI:
                 self.doppio_proxy_var = tk.BooleanVar(value=saved_config.get('doppio_proxy', config_module.DOPPIOPROXY))
                 self.segui_playlist_var = tk.BooleanVar(value=saved_config.get('segui_playlist', config_module.SEGUI_PLAYLIST))
                 self.ascolta_canzoni_var = tk.BooleanVar(value=saved_config.get('ascolta_canzoni', config_module.ASCOLTA_CANZONI))
-                self.stop_for_robot_var = tk.BooleanVar(value=saved_config.get('stop_for_robot', config_module.STOP_FOR_ROBOT))                
+                self.stop_for_robot_var = tk.BooleanVar(value=saved_config.get('stop_for_robot', config_module.STOP_FOR_ROBOT))
                 self.reset_router_var = tk.BooleanVar(value=saved_config.get('reset_router', config_module.RESET_ROUTER))
+                self.reset_mac_var = tk.BooleanVar(value=saved_config.get('reset_mac', config_module.RESET_MAC))
                 self.disable_stealth_var = tk.BooleanVar(value=saved_config.get('disable_stealth', config_module.DISABLE_STEALTH))
                 self.secondo_schermo_var = tk.BooleanVar(value=saved_config.get('secondo_schermo', False))
                 
@@ -380,6 +381,7 @@ class SpotifyBotGUI:
             self.ascolta_canzoni_var = tk.BooleanVar(value=config_module.ASCOLTA_CANZONI)
             self.stop_for_robot_var = tk.BooleanVar(value=config_module.STOP_FOR_ROBOT)
             self.reset_router_var = tk.BooleanVar(value=config_module.RESET_ROUTER)
+            self.reset_mac_var = tk.BooleanVar(value=config_module.RESET_MAC)
             self.disable_stealth_var = tk.BooleanVar(value=config_module.DISABLE_STEALTH)
             self.secondo_schermo_var = tk.BooleanVar(value=False)
             
@@ -404,8 +406,8 @@ class SpotifyBotGUI:
             'usa_proxy': self.proxy_var.get(),
             'doppio_proxy': self.doppio_proxy_var.get(),
             'segui_playlist': self.segui_playlist_var.get(),
-            'ascolta_canzoni': self.ascolta_canzoni_var.get(),
-            'stop_for_robot': self.stop_for_robot_var.get(),            'reset_router': self.reset_router_var.get(),
+            'ascolta_canzoni': self.ascolta_canzoni_var.get(),            'stop_for_robot': self.stop_for_robot_var.get(),            'reset_router': self.reset_router_var.get(),
+            'reset_mac': self.reset_mac_var.get(),
             'disable_stealth': self.disable_stealth_var.get(),
             'secondo_schermo': self.secondo_schermo_var.get(),
             'max_iterazioni': self.max_iterazioni_var.get(),
@@ -521,8 +523,8 @@ class SpotifyBotGUI:
             
             'doppio_proxy': self.doppio_proxy_var.get(),
             'stop_for_robot': self.stop_for_robot_var.get(),
-            'tempo_ripartenza': self.tempo_ripartenza_var.get(),
-            'reset_router': self.reset_router_var.get(),
+            'tempo_ripartenza': self.tempo_ripartenza_var.get(),            'reset_router': self.reset_router_var.get(),
+            'reset_mac': self.reset_mac_var.get(),
             'tipo_router': self.tipo_router_var.get(),
             
             'segui_playlist': self.segui_playlist_var.get(),

@@ -1,6 +1,7 @@
 import random
 from time import sleep
 from funzioni.spotify_functions import *
+from funzioni.mac_changer import change_mac
 from config import *
 import re
 import os
@@ -113,6 +114,18 @@ def esegui_bot_spotify(config):
                 else:
                     print("Bot rilevato, attendi un attimo...")
 
+                    # Reset MAC Address se abilitato
+                    if config.get('reset_mac', False):
+                        print("Cambio MAC address in corso...")
+                        try:
+                            if change_mac():
+                                print("MAC address cambiato con successo!")
+                            else:
+                                print("Errore durante il cambio MAC address")
+                        except Exception as e:
+                            print(f"Errore durante il cambio MAC: {str(e)}")
+
+                    # Reset Router se abilitato
                     if config.get('reset_router', False):
                         tipo_router = config.get('tipo_router', '')
                         if tipo_router == 'tim':

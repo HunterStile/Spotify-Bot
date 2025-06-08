@@ -356,6 +356,59 @@ def reset_router_vodafone(driver):
     
     print("Router Riavviato")
     
+# FUNZIONI MAC ADDRESS #
+
+def change_mac_address(method='powershell'):
+    """Cambia MAC address usando PowerShell (metodo ottimizzato)"""
+    try:
+        from .mac_changer import MacChanger
+        changer = MacChanger()
+        
+        print("🔄 Cambio MAC address in corso...")
+        success = changer.change_mac_auto(method)
+        
+        if success:
+            print(f"✅ MAC address cambiato: {changer.current_mac}")
+            return True
+        else:
+            print("❌ Cambio MAC address fallito")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Errore cambio MAC: {e}")
+        return False
+
+def reset_network_identity():
+    """Reset completo identità di rete (MAC + IP)"""
+    try:
+        print("🔄 Reset identità di rete...")
+        
+        # 1. Cambia MAC address
+        mac_success = change_mac_address()
+        
+        # 2. Reset connessioni di rete
+        reset_network_connections()
+        
+        # 3. Forza rinnovo IP
+        subprocess.run('ipconfig /release', shell=True, capture_output=True)
+        sleep(2)
+        subprocess.run('ipconfig /renew', shell=True, capture_output=True)
+        sleep(3)
+        
+        # 4. Flush DNS
+        subprocess.run('ipconfig /flushdns', shell=True, capture_output=True)
+        
+        if mac_success:
+            print("✅ Reset identità di rete completato")
+            return True
+        else:
+            print("⚠️ Reset parziale completato (solo IP)")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Errore reset identità: {e}")
+        return False
+
 # FUNZIONI SPOTIFY #
 
 #Crea un account spotify
@@ -371,7 +424,7 @@ def crea_account(driver, proxy, stop_for_robot, proxy_list=None, proxy_list_firs
     for i in range(1000):
         nome = fake.first_name()
         nomi.append(nome)
-    mesi = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre''novembre''dicembre']
+    mesi = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre']
     nickname = random.choice(nomi)
     anno=randint(1996,2005)
     mese=random.choice(mesi)
@@ -754,9 +807,3 @@ def get_chrome_version():
     except Exception as e:
         print(f"[BOT] Errore nel rilevamento versione Chrome: {e}")
         return None
-
-
-
-
-
-

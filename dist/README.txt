@@ -55,7 +55,7 @@ MULTITHREADING:
 SUPPORTO:
 ===============================================
 
-Versione: 1.2.0
+Versione: 1.2.1
 Data build: $(Get-Date)
 
 Per supporto o problemi, verifica:
