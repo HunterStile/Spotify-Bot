@@ -48,37 +48,21 @@ Oppure: ip:porta (se senza autenticazione)
 PATCH NOTES:
 ===============================================
 
-# 🆕 VERSIONE 1.2.1 - MAC ADDRESS SPOOFING
+## 🆕 VERSIONE 1.2.2 - EXECUTABLE CSV FIX
 **📅 Data di rilascio**: 08/06/2025  
-**🏷️ Tipo**: Minor Update - Advanced Anti-Detection
+**🏷️ Tipo**: Critical Bug Fix - CSV File Access
 
-### ✨ **NUOVE FUNZIONALITÀ**
+### 🔧 **BUG FIXES CRITICI**
 
-#### 🔧 **Sistema Reset MAC Address Avanzato**
-- **Reset MAC Automatico**: Cambio automatico MAC address durante rilevamento robot/CAPTCHA
-- **Metodi Multipli**: Fallback automatico tra PowerShell e Netsh per massima compatibilità
-- **Vendor Prefix Realistici**: Utilizzo prefissi reali (Intel, Microsoft, VirtualBox, VMware)
-- **Verifica Privilegi Admin**: Controllo automatico permessi amministratore
-- **Logging Dettagliato**: Output completo operazioni MAC per debugging
+#### 📁 **Sistema CSV Files Completamente Risolto**
+- **✅ RISOLTO: CSV Account non accessibile in eseguibile**
+  - Implementata funzione `get_writable_csv_path()` per gestione `account_spotify.csv`
+  - File CSV copiato automaticamente in directory utente scrivibile (`~/SpotifyBot/`)
+  - Accesso agli account esistenti ora funziona correttamente nell'eseguibile
 
-#### 🎮 **Integrazione GUI Completa**
-- **Checkbox "Reset MAC"**: Nuova opzione nel Router Reset Frame
-- **Configurazione Persistente**: Salvataggio impostazione reset MAC in `gui_config.json`
-- **Workflow Integrato**: Reset MAC + Reset Router per massima efficacia anti-detection
-- **Controlli Pre-Volo**: Validazione configurazioni MAC prima dell'avvio
-
-### 🔧 **MIGLIORAMENTI TECNICI**
-
-#### 🛡️ **Anti-Detection Potenziato**
-- **Hardware Fingerprinting**: Mascheramento completo identità hardware
-- **Network Layer Evasion**: Cambio MAC a livello network adapter
-- **Randomizzazione Intelligente**: Generazione MAC con pattern realistici
-- **Fallback Robusto**: Sistema doppio per gestire diverse configurazioni Windows
-
-#### ⚙️ **Architettura Modulare**
-- **MacChanger Class**: Classe dedicata con metodi PowerShell e Netsh
-- **Compatibility Functions**: Funzioni di compatibilità per integrazione esistente
-- **Error Handling**: Gestione robusta errori con retry automatici
-- **Admin Detection**: Rilevamento automatico privilegi tramite ctypes
+- **✅ RISOLTO: Salvataggio account creati in eseguibile**
+  - Implementata funzione `get_writable_csv_creati_path()` per gestione `account_spotify_creati.csv`
+  - Account creati vengono salvati correttamente anche nell'exe compilato
+  - Creazione automatica header CSV se file non esiste
 
 ===============================================

@@ -540,10 +540,9 @@ def crea_account(driver, proxy, stop_for_robot, proxy_list=None, proxy_list_firs
         print("Account Creato!")        # Dati da inserire nel file CSV
         new_rows = [
             [email, password]
-        ]
-
-        # Apri il file CSV in modalità append
-        csv_path = get_resource_path('account_spotify_creati.csv')
+        ]        # Apri il file CSV in modalità append
+        from Main import get_writable_csv_creati_path
+        csv_path = get_writable_csv_creati_path()
         with open(csv_path, 'a', newline='') as csvfile:
             # Scrivi i dati nel file CSV
             csvwriter = csv.writer(csvfile, delimiter=',')

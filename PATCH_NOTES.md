@@ -1,7 +1,7 @@
 # 🎵 SPOTIFY BOT - PATCH NOTES
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Version-1.2.1-brightgreen?style=for-the-badge" alt="Version"/>
+  <img src="https://img.shields.io/badge/Version-1.2.3-brightgreen?style=for-the-badge" alt="Version"/>
   <img src="https://img.shields.io/badge/Status-Stable-success?style=for-the-badge" alt="Status"/>
   <img src="https://img.shields.io/badge/Last%20Update-June%202025-blue?style=for-the-badge" alt="Last Update"/>
 </div>
@@ -10,6 +10,57 @@
   <h3>🗓️ Registro completo delle modifiche e aggiornamenti</h3>
   <p><em>Cronologia dettagliata dall'inception del progetto alla versione corrente</em></p>
 </div>
+
+---
+
+## 🆕 VERSIONE 1.2.2 - EXECUTABLE CSV FIX
+**📅 Data di rilascio**: 08/06/2025  
+**🏷️ Tipo**: Critical Bug Fix - CSV File Access
+
+### 🔧 **BUG FIXES CRITICI**
+
+#### 📁 **Sistema CSV Files Completamente Risolto**
+- **✅ RISOLTO: CSV Account non accessibile in eseguibile**
+  - Implementata funzione `get_writable_csv_path()` per gestione `account_spotify.csv`
+  - File CSV copiato automaticamente in directory utente scrivibile (`~/SpotifyBot/`)
+  - Accesso agli account esistenti ora funziona correttamente nell'eseguibile
+
+- **✅ RISOLTO: Salvataggio account creati in eseguibile**
+  - Implementata funzione `get_writable_csv_creati_path()` per gestione `account_spotify_creati.csv`
+  - Account creati vengono salvati correttamente anche nell'exe compilato
+  - Creazione automatica header CSV se file non esiste
+
+#### 🛠️ **MIGLIORAMENTI TECNICI**
+- **Directory Management**: Creazione automatica `~/SpotifyBot/` se non esistente
+- **File Backup**: Copia automatica file CSV originali dalla risorsa interna
+- **Path Resolution**: Gestione corretta percorsi sia in ambiente dev che in PyInstaller
+- **Error Handling**: Controlli robusti per accesso file e permessi scrittura
+
+#### 📊 **GESTIONE PERCORSI MIGLIORATA**
+- **PyInstaller Compatibility**: Perfetta compatibilità con file embedded in exe
+- **Cross-Platform Paths**: Utilizzo `os.path.join()` per compatibilità multi-OS
+- **Resource Access**: Corretta gestione `get_resource_path()` per file interni
+- **Writable Storage**: Directory utente garantita per operazioni di scrittura
+
+### 🔍 **DETTAGLI IMPLEMENTAZIONE**
+```python
+# Nuove funzioni aggiunte in Main.py
+def get_writable_csv_path()         # Gestione account_spotify.csv
+def get_writable_csv_creati_path()  # Gestione account_spotify_creati.csv
+```
+
+### 📋 **WORKFLOW OPERATIVO**
+1. **Check esistenza file** in directory corrente
+2. **Verifica permessi** di scrittura
+3. **Copia da risorsa interna** se necessario
+4. **Creazione directory utente** `~/SpotifyBot/`
+5. **Return percorso scrivibile** per operazioni CSV
+
+### 🎯 **TESTING RESULTS**
+- **✅ Ambiente Dev**: Funziona perfettamente
+- **✅ Eseguibile PyInstaller**: Problema risolto
+- **✅ Accesso Account**: Login con CSV ora operativo in exe
+- **✅ Creazione Account**: Salvataggio in CSV funzionante in exe
 
 ---
 

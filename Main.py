@@ -3,6 +3,69 @@ from time import sleep
 from funzioni.spotify_functions import *
 from funzioni.mac_changer import change_mac
 from config import *
+import shutil
+import tempfile
+
+# Definisci il percorso del file CSV per account
+def get_writable_csv_path():
+    """Ottiene un percorso scrivibile per il file CSV, copiandolo se necessario"""
+    csv_filename = 'account_spotify.csv'
+    
+    # Prova prima nella directory corrente
+    current_dir_csv = os.path.join(os.getcwd(), csv_filename)
+    if os.path.exists(current_dir_csv) and os.access(os.path.dirname(current_dir_csv), os.W_OK):
+        return current_dir_csv
+    
+    # Se non esiste o non è scrivibile, copia dalla risorsa interna
+    resource_csv = get_resource_path(csv_filename)
+    
+    # Directory temporanea dell'utente
+    user_temp_dir = os.path.join(os.path.expanduser('~'), 'SpotifyBot')
+    os.makedirs(user_temp_dir, exist_ok=True)
+    
+    writable_csv = os.path.join(user_temp_dir, csv_filename)
+    
+    # Copia il file se non esiste già
+    if not os.path.exists(writable_csv) and os.path.exists(resource_csv):
+        shutil.copy2(resource_csv, writable_csv)
+        print(f"File CSV copiato in: {writable_csv}")
+    
+    return writable_csv
+
+def get_writable_csv_creati_path():
+    """Ottiene un percorso scrivibile per il file CSV degli account creati"""
+    csv_filename = 'account_spotify_creati.csv'
+    
+    # Prova prima nella directory corrente
+    current_dir_csv = os.path.join(os.getcwd(), csv_filename)
+    if os.path.exists(current_dir_csv) and os.access(os.path.dirname(current_dir_csv), os.W_OK):
+        return current_dir_csv
+    
+    # Se non esiste o non è scrivibile, copia dalla risorsa interna
+    resource_csv = get_resource_path(csv_filename)
+    
+    # Directory temporanea dell'utente
+    user_temp_dir = os.path.join(os.path.expanduser('~'), 'SpotifyBot')
+    os.makedirs(user_temp_dir, exist_ok=True)
+    
+    writable_csv = os.path.join(user_temp_dir, csv_filename)
+    
+    # Copia il file se non esiste già o se è vuoto, crea l'header
+    if not os.path.exists(writable_csv):
+        if os.path.exists(resource_csv):
+            shutil.copy2(resource_csv, writable_csv)
+            print(f"File CSV account creati copiato in: {writable_csv}")
+        else:
+            # Crea il file con header se non esiste
+            with open(writable_csv, 'w', newline='', encoding='utf-8') as csvfile:
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(['Email', 'Password'])
+            print(f"File CSV account creati creato in: {writable_csv}")
+    
+    return writable_csv
+
+file = get_writable_csv_path()
+file_creati = get_writable_csv_creati_path()
 import re
 import os
 

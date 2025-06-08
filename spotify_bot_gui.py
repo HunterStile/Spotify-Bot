@@ -128,9 +128,8 @@ class SpotifyBotGUI:
         title.pack(side=tk.LEFT)
         
         # Add a small Spotify-like icon or separator here if desired
-        
-        # Version info
-        version_label = tk.Label(header_frame, text="v1.2.1", 
+          # Version info
+        version_label = tk.Label(header_frame, text="v1.2.2", 
                                bg=self.bg_color, fg=self.text_color)
         version_label.pack(side=tk.RIGHT)
 
