@@ -34,6 +34,14 @@
 - 💾 **Configurazione Persistente** - Salvataggio automatico impostazioni
 - 📊 **Monitoring Real-time** - Console log colorata con stato operazioni
 
+### 🎤 **NEW: Artist Discovery & Scraper** ⭐
+- 🔍 **Artist Mining** - Trova artisti emergenti dalle playlist di curatori
+- 📊 **Smart Filtering** - Filtra per numero ascoltatori mensili
+- 📧 **Contact Extraction** - Estrae email e contatti social automaticamente
+- 📱 **Social Mining** - Instagram, Facebook, Twitter, YouTube
+- 💾 **Export Avanzato** - CSV dettagliato con tutti i dati raccolti
+- 🎯 **Multi-Playlist** - Analizza multiple playlist simultaneamente
+
 ---
 
 ## 🚀 Quick Start

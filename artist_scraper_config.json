@@ -1,0 +1,8 @@
+{
+  "max_artisti": 4,
+  "soglia_ascoltatori": 10000,
+  "usa_stealth": false,
+  "secondo_schermo": false,
+  "output_filename": "artisti-emergenti.csv",
+  "playlist_urls": "https://open.spotify.com/playlist/0DgfTmaDWhHqrxzbF2WEgk"
+}
