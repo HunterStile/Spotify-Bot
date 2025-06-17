@@ -8,7 +8,7 @@ class SpotifyBotLauncher:
     def __init__(self, master):
         self.master = master
         master.title("Spotify Bot Suite - Launcher")
-        master.geometry("600x500")
+        master.geometry("600x700")
         master.resizable(False, False)
         
         # Spotify theme colors
@@ -62,8 +62,7 @@ class SpotifyBotLauncher:
             "spotify_bot_gui.py",
             row=0
         )
-        
-        # Artist Scraper Card
+          # Artist Scraper Card
         self.create_bot_card(
             cards_frame,
             "🎤 Artist Scraper",
@@ -79,11 +78,26 @@ class SpotifyBotLauncher:
             row=1
         )
         
-        # Footer
+        # Contact Finder Card
+        self.create_bot_card(
+            cards_frame,
+            "🔍 Contact Finder",
+            [
+                "📱 Ricerca automatica contatti",
+                "🔎 Scan Instagram, Facebook, TikTok",
+                "📧 Trova email e booking",
+                "🌐 Multimotore di ricerca",
+                "📊 Arricchisce CSV artisti",
+                "⚙️ Modalità stealth avanzata"
+            ],
+            "contact_finder_gui.py",
+            row=2
+        )
+          # Footer
         footer_frame = ttk.Frame(main_frame)
         footer_frame.pack(fill=tk.X, pady=(30, 0))
         
-        version_label = tk.Label(footer_frame, text="Suite v1.3.0 by HunterStile", 
+        version_label = tk.Label(footer_frame, text="Suite v1.4.0 by HunterStile", 
                                bg=self.bg_color, fg=self.text_color, font=("Arial", 10))
         version_label.pack()
         
@@ -161,12 +175,11 @@ def main():
     
     root = tk.Tk()
     app = SpotifyBotLauncher(root)
-    
-    # Center the window
+      # Center the window
     root.update_idletasks()
     x = (root.winfo_screenwidth() // 2) - (600 // 2)
-    y = (root.winfo_screenheight() // 2) - (500 // 2)
-    root.geometry(f"600x500+{x}+{y}")
+    y = (root.winfo_screenheight() // 2) - (700 // 2)
+    root.geometry(f"600x700+{x}+{y}")
     
     root.mainloop()
 

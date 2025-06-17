@@ -1,6 +1,6 @@
 {
-  "max_artisti": 4,
-  "soglia_ascoltatori": 10000,
+  "max_artisti": 10,
+  "soglia_ascoltatori": 500,
   "usa_stealth": false,
   "secondo_schermo": false,
   "output_filename": "artisti-emergenti.csv",

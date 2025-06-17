@@ -1,0 +1,18 @@
+{
+  "input_file": "artisti-emergenti.csv",
+  "output_file": "artisti-con-contatti.csv",
+  "max_results": 3,
+  "delay_min": 3,
+  "delay_max": 7,
+  "use_stealth": true,
+  "headless": false,
+  "verify_profiles": false,
+  "search_instagram": true,
+  "search_facebook": true,
+  "search_tiktok": false,
+  "search_twitter": false,
+  "search_youtube": false,
+  "search_email": true,
+  "use_google": true,
+  "use_bing": false
+}
