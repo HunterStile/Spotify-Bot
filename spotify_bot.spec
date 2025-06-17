@@ -76,8 +76,7 @@ exe = EXE(
     console=False,  # Set to True if you want to see console output
     disable_windowed_traceback=False,
     argv_emulation=False,
-    target_arch=None,
-    codesign_identity=None,
+    target_arch=None,    codesign_identity=None,
     entitlements_file=None,
-    icon=None,  # You can add an .ico file path here if you have an icon
+    icon='icon.ico',  # Percorso alla tua icona personalizzata
 )

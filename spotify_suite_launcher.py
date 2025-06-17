@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, font
+from tkinter import ttk, font, messagebox
 import subprocess
 import sys
 import os
@@ -8,7 +8,7 @@ class SpotifyBotLauncher:
     def __init__(self, master):
         self.master = master
         master.title("Spotify Bot Suite - Launcher")
-        master.geometry("600x700")
+        master.geometry("650x750")
         master.resizable(False, False)
         
         # Spotify theme colors
@@ -30,26 +30,38 @@ class SpotifyBotLauncher:
         
     def create_widgets(self):
         # Main container
-        main_frame = ttk.Frame(self.master, padding=30)
-        main_frame.pack(fill=tk.BOTH, expand=True)
+        main_frame = tk.Frame(self.master, bg=self.bg_color)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
         
         # Header
         header_font = font.Font(family="Arial", size=24, weight="bold")
         header = tk.Label(main_frame, text="🎵 Spotify Bot Suite", 
                          font=header_font, bg=self.bg_color, fg=self.accent_color)
-        header.pack(pady=(0, 10))
+        header.pack(pady=(0, 5))
         
         subtitle = tk.Label(main_frame, text="Scegli il modulo da avviare", 
                            font=("Arial", 12), bg=self.bg_color, fg=self.text_color)
-        subtitle.pack(pady=(0, 30))
+        subtitle.pack(pady=(0, 25))
         
-        # Bot cards container
-        cards_frame = ttk.Frame(main_frame)
-        cards_frame.pack(fill=tk.BOTH, expand=True)
+        # Scrollable frame for cards
+        canvas = tk.Canvas(main_frame, bg=self.bg_color, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg=self.bg_color)
         
-        # Original Spotify Bot Card
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Bot cards
         self.create_bot_card(
-            cards_frame,
+            scrollable_frame,
             "🎧 Spotify Bot Originale",
             [
                 "✅ Creazione account automatica",
@@ -60,11 +72,11 @@ class SpotifyBotLauncher:
                 "✅ Multithreading avanzato"
             ],
             "spotify_bot_gui.py",
-            row=0
+            0
         )
-          # Artist Scraper Card
+        
         self.create_bot_card(
-            cards_frame,
+            scrollable_frame,
             "🎤 Artist Scraper",
             [
                 "🔍 Trova artisti emergenti",
@@ -75,12 +87,11 @@ class SpotifyBotLauncher:
                 "🎯 Filtri per ascoltatori"
             ],
             "artist_scraper_gui.py",
-            row=1
+            1
         )
         
-        # Contact Finder Card
         self.create_bot_card(
-            cards_frame,
+            scrollable_frame,
             "🔍 Contact Finder",
             [
                 "📱 Ricerca automatica contatti",
@@ -91,11 +102,12 @@ class SpotifyBotLauncher:
                 "⚙️ Modalità stealth avanzata"
             ],
             "contact_finder_gui.py",
-            row=2
+            2
         )
-          # Footer
-        footer_frame = ttk.Frame(main_frame)
-        footer_frame.pack(fill=tk.X, pady=(30, 0))
+        
+        # Footer
+        footer_frame = tk.Frame(main_frame, bg=self.bg_color)
+        footer_frame.pack(fill=tk.X, pady=(20, 0))
         
         version_label = tk.Label(footer_frame, text="Suite v1.4.0 by HunterStile", 
                                bg=self.bg_color, fg=self.text_color, font=("Arial", 10))
@@ -103,40 +115,54 @@ class SpotifyBotLauncher:
         
     def create_bot_card(self, parent, title, features, script_name, row):
         """Crea una card per un bot"""
-        # Card frame
-        card_frame = tk.Frame(parent, bg=self.secondary_bg, relief=tk.RAISED, bd=2)
-        card_frame.grid(row=row, column=0, sticky="ew", pady=10, padx=5, ipady=15, ipadx=15)
-        
-        # Configure grid weights
-        parent.columnconfigure(0, weight=1)
+        # Card frame con stile migliorato
+        card_frame = tk.Frame(parent, bg=self.secondary_bg, relief=tk.RAISED, bd=1)
+        card_frame.pack(fill=tk.X, pady=12, padx=10, ipady=20, ipadx=20)
         
         # Title
         title_font = font.Font(family="Arial", size=16, weight="bold")
         title_label = tk.Label(card_frame, text=title, font=title_font,
                               bg=self.secondary_bg, fg=self.accent_color)
-        title_label.pack(pady=(0, 10))
+        title_label.pack(pady=(0, 15))
         
-        # Features list
-        features_frame = tk.Frame(card_frame, bg=self.secondary_bg)
-        features_frame.pack(fill=tk.X, pady=(0, 15))
+        # Features container
+        features_container = tk.Frame(card_frame, bg=self.secondary_bg)
+        features_container.pack(fill=tk.X, pady=(0, 20))
         
-        for i, feature in enumerate(features):
-            feature_label = tk.Label(features_frame, text=feature, 
-                                   bg=self.secondary_bg, fg=self.text_color,
-                                   font=("Arial", 10), anchor='w')
-            feature_label.pack(fill=tk.X, pady=2)
+        # Organizza le features in due colonne se necessario
+        if len(features) > 4:
+            # Due colonne
+            left_frame = tk.Frame(features_container, bg=self.secondary_bg)
+            right_frame = tk.Frame(features_container, bg=self.secondary_bg)
+            left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 15))
+            right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=(15, 0))
+            
+            mid_point = (len(features) + 1) // 2
+            for i, feature in enumerate(features):
+                target_frame = left_frame if i < mid_point else right_frame
+                feature_label = tk.Label(target_frame, text=feature, 
+                                       bg=self.secondary_bg, fg=self.text_color,
+                                       font=("Arial", 10), anchor='w')
+                feature_label.pack(fill=tk.X, pady=3)
+        else:
+            # Una colonna centrata
+            for feature in features:
+                feature_label = tk.Label(features_container, text=feature, 
+                                       bg=self.secondary_bg, fg=self.text_color,
+                                       font=("Arial", 10), anchor='center')
+                feature_label.pack(fill=tk.X, pady=3)
         
-        # Launch button
-        launch_btn = tk.Button(card_frame, text=f"🚀 Avvia", 
+        # Launch button con stile migliorato
+        launch_btn = tk.Button(card_frame, text="🚀 AVVIA MODULO", 
                               command=lambda: self.launch_script(script_name),
                               bg=self.accent_color, fg=self.text_color,
                               font=("Arial", 12, "bold"), relief=tk.FLAT,
-                              padx=20, pady=8)
-        launch_btn.pack()
+                              padx=30, pady=12, cursor="hand2")
+        launch_btn.pack(pady=(5, 0))
         
         # Hover effects
         def on_enter(e):
-            launch_btn.configure(bg="#1ed760")  # Lighter green on hover
+            launch_btn.configure(bg="#1ed760")
             
         def on_leave(e):
             launch_btn.configure(bg=self.accent_color)
@@ -149,7 +175,7 @@ class SpotifyBotLauncher:
         try:
             # Verifica che il file esista
             if not os.path.exists(script_name):
-                tk.messagebox.showerror("Errore", f"File {script_name} non trovato!")
+                messagebox.showerror("Errore", f"File {script_name} non trovato!")
                 return
             
             # Lancia il script
@@ -158,11 +184,10 @@ class SpotifyBotLauncher:
             else:
                 subprocess.Popen([sys.executable, script_name])
                 
-            # Opzionalmente chiudi il launcher
-            # self.master.destroy()
+            messagebox.showinfo("Successo", f"Modulo {script_name} avviato con successo!")
             
         except Exception as e:
-            tk.messagebox.showerror("Errore", f"Errore nell'avvio del modulo:\n{str(e)}")
+            messagebox.showerror("Errore", f"Errore nell'avvio del modulo:\n{str(e)}")
 
 def main():
     # Windows DPI awareness
@@ -175,11 +200,14 @@ def main():
     
     root = tk.Tk()
     app = SpotifyBotLauncher(root)
-      # Center the window
+    
+    # Center the window
     root.update_idletasks()
-    x = (root.winfo_screenwidth() // 2) - (600 // 2)
-    y = (root.winfo_screenheight() // 2) - (700 // 2)
-    root.geometry(f"600x700+{x}+{y}")
+    width = 650
+    height = 750
+    x = (root.winfo_screenwidth() // 2) - (width // 2)
+    y = (root.winfo_screenheight() // 2) - (height // 2)
+    root.geometry(f"{width}x{height}+{x}+{y}")
     
     root.mainloop()
 
